@@ -1,0 +1,54 @@
+9. Modelo SaaS / multi-tenant
+
+O Yardflow vai ser oferecido como produto para múltiplas empresas clientes, não só para uma. Isso muda a arquitetura na base, então fica definido desde o início:
+
+Modelo de negócio
+
+
+Cobrança: plano único fixo por empresa/mês, sem limite de caminhões, usuários ou registros.
+Gateway de pagamento: Mercado Pago ou Pagar.me (PIX e boleto, adequado ao mercado brasileiro). Integração via assinatura recorrente (cobrança automática mensal).
+Onboarding: sem cadastro automático (self-service). Você (Simone) cria manualmente a conta de cada empresa cliente em um painel de superadministrador.
+
+
+Arquitetura multi-tenant
+
+
+Isolamento de dados: todas as tabelas principais (caminhões, registros de visita, usuários, configuração de geofence) levam uma coluna empresa_id. Toda consulta ao banco é automaticamente filtrada pela empresa do usuário logado — uma empresa nunca vê dados de outra.
+Subdomínio ou código por empresa: cada empresa acessa por um identificador próprio (ex: empresa.yardflow.com.br ou seleção de empresa no login), evitando confusão entre clientes diferentes.
+Configuração por empresa: cada empresa tem sua própria configuração de geofence (coordenadas e raio podem ser diferentes por cliente), suas próprias docas/portarias cadastradas, e sua própria marca/cor se necessário.
+
+
+Papéis de usuário (atualizado)
+
+PerfilEscopoSuperadmin (você)Cria e gerencia empresas clientes, ativa/suspende contas por inadimplência, vê status de pagamento de todasGestor da empresa clienteAcesso total aos dados da própria empresa: relatórios, configuração de geofence, cadastro de operadoresOperador de portariaEscopo: só a empresa à qual pertenceOperador de docaEscopo: só a empresa à qual pertenceMotorista (PWA)Vinculado à empresa pela qual foi registrado na portaria
+
+Cobrança e status da conta
+
+
+Cada empresa tem um status: ativa, inadimplente, suspensa, cancelada.
+Quando a assinatura vence e não é paga, o sistema bloqueia o acesso ao painel admin daquela empresa (mas pode manter o PWA do motorista funcionando por um prazo de tolerância, a definir).
+Webhook do Mercado Pago/Pagar.me atualiza o status automaticamente quando o pagamento é confirmado ou falha.
+
+
+Impacto na estrutura técnica
+
+Yardflow/
+  apps/
+    api-server/        (backend Express + Drizzle — agora multi-tenant)
+    admin/              (painel: login seleciona/identifica a empresa)
+    driver-pwa/          (PWA do motorista, vinculado à empresa via QR/registro)
+    superadmin/          (NOVO — painel seu, para cadastrar empresas e ver cobrança)
+  packages/
+    shared/              (tipos e schemas compartilhados, incluindo empresa_id)
+
+Em aberto sobre o modelo SaaS
+
+
+Valor do plano mensal fixo
+Prazo de tolerância antes de suspender uma empresa inadimplente
+Se o QR Code de acesso ao PWA será o mesmo padrão visual para todas as empresas ou personalizado por cliente
+
+
+10. Nome do projeto
+
+Yardflow — repositório sugerido: Yardflow2026
