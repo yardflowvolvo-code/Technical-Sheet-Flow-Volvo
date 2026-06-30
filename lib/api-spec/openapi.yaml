@@ -22,6 +22,14 @@ tags:
     description: Dashboard statistics
   - name: config
     description: System configuration
+  - name: companies
+    description: Company management (superadmin)
+  - name: company-users
+    description: Company user management
+  - name: subscriptions
+    description: Subscription management
+  - name: webhooks
+    description: Payment webhooks
 paths:
   /healthz:
     get:
@@ -397,6 +405,254 @@ paths:
               schema:
                 $ref: "#/components/schemas/SystemConfig"
 
+  /companies:
+    get:
+      operationId: listCompanies
+      tags: [companies]
+      summary: List all companies (superadmin only)
+      responses:
+        "200":
+          description: List of companies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Company"
+    post:
+      operationId: createCompany
+      tags: [companies]
+      summary: Create a new company (superadmin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyInput"
+      responses:
+        "201":
+          description: Company created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+
+  /companies/{id}:
+    get:
+      operationId: getCompany
+      tags: [companies]
+      summary: Get company by ID (superadmin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Company details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateCompany
+      tags: [companies]
+      summary: Update company (superadmin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyUpdate"
+      responses:
+        "200":
+          description: Updated company
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+
+  /companies/{id}/suspend:
+    post:
+      operationId: suspendCompany
+      tags: [companies]
+      summary: Suspend a company account (superadmin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Company suspended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+
+  /companies/{id}/activate:
+    post:
+      operationId: activateCompany
+      tags: [companies]
+      summary: Activate a company account (superadmin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Company activated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Company"
+
+  /company-users:
+    get:
+      operationId: listCompanyUsers
+      tags: [company-users]
+      summary: List users in the current company (gestor only)
+      responses:
+        "200":
+          description: List of company users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CompanyUser"
+    post:
+      operationId: createCompanyUser
+      tags: [company-users]
+      summary: Invite a user to the company (gestor only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyUserInput"
+      responses:
+        "201":
+          description: User invited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyUser"
+
+  /company-users/{id}:
+    patch:
+      operationId: updateCompanyUser
+      tags: [company-users]
+      summary: Update a company user role (gestor only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompanyUserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyUser"
+    delete:
+      operationId: deleteCompanyUser
+      tags: [company-users]
+      summary: Remove a user from the company (gestor only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /me:
+    get:
+      operationId: getMe
+      tags: [company-users]
+      summary: Get current user info and company context
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeResponse"
+        "401":
+          description: Unauthorized
+
+  /subscriptions/current:
+    get:
+      operationId: getCurrentSubscription
+      tags: [subscriptions]
+      summary: Get current company subscription status
+      responses:
+        "200":
+          description: Subscription status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionStatus"
+
+  /subscriptions/checkout:
+    post:
+      operationId: createCheckout
+      tags: [subscriptions]
+      summary: Create a Mercado Pago checkout for subscription
+      responses:
+        "200":
+          description: Checkout URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutResponse"
+
+  /webhooks/mercadopago:
+    post:
+      operationId: mercadoPagoWebhook
+      tags: [webhooks]
+      summary: Mercado Pago payment webhook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MercadoPagoWebhookPayload"
+      responses:
+        "200":
+          description: Acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -656,3 +912,157 @@ components:
       properties:
         success:
           type: boolean
+
+    Company:
+      type: object
+      required:
+        - id
+        - name
+        - slug
+        - status
+        - planMonthlyPrice
+        - createdAt
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+          enum: [active, delinquent, suspended, cancelled]
+        planMonthlyPrice:
+          type: number
+        mercadoPagoSubscriptionId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    CompanyInput:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          minLength: 1
+        slug:
+          type: string
+          minLength: 1
+        planMonthlyPrice:
+          type: number
+
+    CompanyUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, delinquent, suspended, cancelled]
+        planMonthlyPrice:
+          type: number
+
+    CompanyUser:
+      type: object
+      required:
+        - id
+        - companyId
+        - clerkUserId
+        - role
+        - name
+        - email
+        - createdAt
+      properties:
+        id:
+          type: integer
+        companyId:
+          type: integer
+        clerkUserId:
+          type: string
+        role:
+          type: string
+          enum: [gestor, portaria, doca]
+        name:
+          type: string
+        email:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CompanyUserInput:
+      type: object
+      required:
+        - clerkUserId
+        - role
+        - name
+        - email
+      properties:
+        clerkUserId:
+          type: string
+        role:
+          type: string
+          enum: [gestor, portaria, doca]
+        name:
+          type: string
+        email:
+          type: string
+
+    CompanyUserUpdate:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [gestor, portaria, doca]
+
+    MeResponse:
+      type: object
+      required:
+        - clerkUserId
+        - isSuperadmin
+      properties:
+        clerkUserId:
+          type: string
+        isSuperadmin:
+          type: boolean
+        companyUser:
+          $ref: "#/components/schemas/CompanyUser"
+        company:
+          $ref: "#/components/schemas/Company"
+
+    SubscriptionStatus:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [active, delinquent, suspended, cancelled, none]
+        currentPeriodEnd:
+          type: ["string", "null"]
+          format: date-time
+        externalId:
+          type: ["string", "null"]
+
+    CheckoutResponse:
+      type: object
+      required:
+        - checkoutUrl
+      properties:
+        checkoutUrl:
+          type: string
+
+    MercadoPagoWebhookPayload:
+      type: object
+      properties:
+        type:
+          type: string
+        data:
+          type: object
+          properties:
+            id:
+              type: string

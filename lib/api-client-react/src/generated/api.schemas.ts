@@ -170,6 +170,138 @@ export interface SuccessResponse {
   success: boolean;
 }
 
+export type CompanyStatus = typeof CompanyStatus[keyof typeof CompanyStatus];
+
+
+export const CompanyStatus = {
+  active: 'active',
+  delinquent: 'delinquent',
+  suspended: 'suspended',
+  cancelled: 'cancelled',
+} as const;
+
+export interface Company {
+  id: number;
+  name: string;
+  slug: string;
+  status: CompanyStatus;
+  planMonthlyPrice: number;
+  /** @nullable */
+  mercadoPagoSubscriptionId?: string | null;
+  createdAt: string;
+}
+
+export interface CompanyInput {
+  /** @minLength 1 */
+  name: string;
+  /** @minLength 1 */
+  slug: string;
+  planMonthlyPrice?: number;
+}
+
+export type CompanyUpdateStatus = typeof CompanyUpdateStatus[keyof typeof CompanyUpdateStatus];
+
+
+export const CompanyUpdateStatus = {
+  active: 'active',
+  delinquent: 'delinquent',
+  suspended: 'suspended',
+  cancelled: 'cancelled',
+} as const;
+
+export interface CompanyUpdate {
+  name?: string;
+  status?: CompanyUpdateStatus;
+  planMonthlyPrice?: number;
+}
+
+export type CompanyUserRole = typeof CompanyUserRole[keyof typeof CompanyUserRole];
+
+
+export const CompanyUserRole = {
+  gestor: 'gestor',
+  portaria: 'portaria',
+  doca: 'doca',
+} as const;
+
+export interface CompanyUser {
+  id: number;
+  companyId: number;
+  clerkUserId: string;
+  role: CompanyUserRole;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
+export type CompanyUserInputRole = typeof CompanyUserInputRole[keyof typeof CompanyUserInputRole];
+
+
+export const CompanyUserInputRole = {
+  gestor: 'gestor',
+  portaria: 'portaria',
+  doca: 'doca',
+} as const;
+
+export interface CompanyUserInput {
+  clerkUserId: string;
+  role: CompanyUserInputRole;
+  name: string;
+  email: string;
+}
+
+export type CompanyUserUpdateRole = typeof CompanyUserUpdateRole[keyof typeof CompanyUserUpdateRole];
+
+
+export const CompanyUserUpdateRole = {
+  gestor: 'gestor',
+  portaria: 'portaria',
+  doca: 'doca',
+} as const;
+
+export interface CompanyUserUpdate {
+  role?: CompanyUserUpdateRole;
+}
+
+export interface MeResponse {
+  clerkUserId: string;
+  isSuperadmin: boolean;
+  companyUser?: CompanyUser;
+  company?: Company;
+}
+
+export type SubscriptionStatusStatus = typeof SubscriptionStatusStatus[keyof typeof SubscriptionStatusStatus];
+
+
+export const SubscriptionStatusStatus = {
+  active: 'active',
+  delinquent: 'delinquent',
+  suspended: 'suspended',
+  cancelled: 'cancelled',
+  none: 'none',
+} as const;
+
+export interface SubscriptionStatus {
+  status: SubscriptionStatusStatus;
+  /** @nullable */
+  currentPeriodEnd?: string | null;
+  /** @nullable */
+  externalId?: string | null;
+}
+
+export interface CheckoutResponse {
+  checkoutUrl: string;
+}
+
+export type MercadoPagoWebhookPayloadData = {
+  id?: string;
+};
+
+export interface MercadoPagoWebhookPayload {
+  type?: string;
+  data?: MercadoPagoWebhookPayloadData;
+}
+
 export type ListArrivalsParams = {
 status?: ListArrivalsStatus;
 active?: boolean;

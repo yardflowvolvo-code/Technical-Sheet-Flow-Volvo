@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
+import { companiesTable } from "./companies";
 
 export const arrivalStatusEnum = pgEnum("arrival_status", [
   "waiting",
@@ -21,6 +22,9 @@ export const arrivalStatusEnum = pgEnum("arrival_status", [
 
 export const arrivalsTable = pgTable("arrivals", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companiesTable.id, {
+    onDelete: "cascade",
+  }),
   plate: text("plate").notNull(),
   driverName: text("driver_name").notNull(),
   invoiceNumber: text("invoice_number"),
@@ -57,10 +61,17 @@ export type PushSubscription = typeof pushSubscriptionsTable.$inferSelect;
 
 export const configTable = pgTable("config", {
   id: serial("id").primaryKey(),
+  companyId: integer("company_id").references(() => companiesTable.id, {
+    onDelete: "cascade",
+  }),
   geofenceLat: real("geofence_lat").notNull().default(-25.453996734949122),
   geofenceLng: real("geofence_lng").notNull().default(-49.362939914073124),
-  geofenceRadiusMeters: integer("geofence_radius_meters").notNull().default(1200),
-  locationIntervalSeconds: integer("location_interval_seconds").notNull().default(20),
+  geofenceRadiusMeters: integer("geofence_radius_meters")
+    .notNull()
+    .default(1200),
+  locationIntervalSeconds: integer("location_interval_seconds")
+    .notNull()
+    .default(20),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 

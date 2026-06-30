@@ -406,3 +406,250 @@ export const UpdateConfigResponse = zod.object({
 })
 
 
+/**
+ * @summary List all companies (superadmin only)
+ */
+export const ListCompaniesResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+export const ListCompaniesResponse = zod.array(ListCompaniesResponseItem)
+
+
+/**
+ * @summary Create a new company (superadmin only)
+ */
+
+
+
+
+export const CreateCompanyBody = zod.object({
+  "name": zod.string().min(1),
+  "slug": zod.string().min(1),
+  "planMonthlyPrice": zod.number().optional()
+})
+
+export const CreateCompanyResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Get company by ID (superadmin only)
+ */
+export const GetCompanyParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetCompanyResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Update company (superadmin only)
+ */
+export const UpdateCompanyParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateCompanyBody = zod.object({
+  "name": zod.string().optional(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']).optional(),
+  "planMonthlyPrice": zod.number().optional()
+})
+
+export const UpdateCompanyResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Suspend a company account (superadmin only)
+ */
+export const SuspendCompanyParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const SuspendCompanyResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Activate a company account (superadmin only)
+ */
+export const ActivateCompanyParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const ActivateCompanyResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary List users in the current company (gestor only)
+ */
+export const ListCompanyUsersResponseItem = zod.object({
+  "id": zod.number(),
+  "companyId": zod.number(),
+  "clerkUserId": zod.string(),
+  "role": zod.enum(['gestor', 'portaria', 'doca']),
+  "name": zod.string(),
+  "email": zod.string(),
+  "createdAt": zod.coerce.date()
+})
+export const ListCompanyUsersResponse = zod.array(ListCompanyUsersResponseItem)
+
+
+/**
+ * @summary Invite a user to the company (gestor only)
+ */
+export const CreateCompanyUserBody = zod.object({
+  "clerkUserId": zod.string(),
+  "role": zod.enum(['gestor', 'portaria', 'doca']),
+  "name": zod.string(),
+  "email": zod.string()
+})
+
+export const CreateCompanyUserResponse = zod.object({
+  "id": zod.number(),
+  "companyId": zod.number(),
+  "clerkUserId": zod.string(),
+  "role": zod.enum(['gestor', 'portaria', 'doca']),
+  "name": zod.string(),
+  "email": zod.string(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Update a company user role (gestor only)
+ */
+export const UpdateCompanyUserParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateCompanyUserBody = zod.object({
+  "role": zod.enum(['gestor', 'portaria', 'doca']).optional()
+})
+
+export const UpdateCompanyUserResponse = zod.object({
+  "id": zod.number(),
+  "companyId": zod.number(),
+  "clerkUserId": zod.string(),
+  "role": zod.enum(['gestor', 'portaria', 'doca']),
+  "name": zod.string(),
+  "email": zod.string(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Remove a user from the company (gestor only)
+ */
+export const DeleteCompanyUserParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteCompanyUserResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
+/**
+ * @summary Get current user info and company context
+ */
+export const GetMeResponse = zod.object({
+  "clerkUserId": zod.string(),
+  "isSuperadmin": zod.boolean(),
+  "companyUser": zod.object({
+  "id": zod.number(),
+  "companyId": zod.number(),
+  "clerkUserId": zod.string(),
+  "role": zod.enum(['gestor', 'portaria', 'doca']),
+  "name": zod.string(),
+  "email": zod.string(),
+  "createdAt": zod.coerce.date()
+}).optional(),
+  "company": zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "slug": zod.string(),
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled']),
+  "planMonthlyPrice": zod.number(),
+  "mercadoPagoSubscriptionId": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+}).optional()
+})
+
+
+/**
+ * @summary Get current company subscription status
+ */
+export const GetCurrentSubscriptionResponse = zod.object({
+  "status": zod.enum(['active', 'delinquent', 'suspended', 'cancelled', 'none']),
+  "currentPeriodEnd": zod.coerce.date().nullish(),
+  "externalId": zod.string().nullish()
+})
+
+
+/**
+ * @summary Create a Mercado Pago checkout for subscription
+ */
+export const CreateCheckoutResponse = zod.object({
+  "checkoutUrl": zod.string()
+})
+
+
+/**
+ * @summary Mercado Pago payment webhook
+ */
+export const MercadoPagoWebhookBody = zod.object({
+  "type": zod.string().optional(),
+  "data": zod.object({
+  "id": zod.string().optional()
+}).optional()
+})
+
+export const MercadoPagoWebhookResponse = zod.object({
+  "success": zod.boolean()
+})
+
+
