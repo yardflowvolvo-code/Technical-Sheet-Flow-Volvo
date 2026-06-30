@@ -1,0 +1,29 @@
+{
+  "name": "Yardflow Driver",
+  "short_name": "Yardflow",
+  "description": "Sistema de monitoramento de caminhões no pátio",
+  "start_url": "/driver/",
+  "scope": "/driver/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/driver/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/driver/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/driver/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -3,13 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Yardflow API - Sistema de monitoramento de caminhões no pátio
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: arrivals
+    description: Truck arrivals and yard management
+  - name: location
+    description: GPS location tracking
+  - name: push
+    description: Push notification subscriptions
+  - name: reports
+    description: Historical reports
+  - name: stats
+    description: Dashboard statistics
+  - name: config
+    description: System configuration
 paths:
   /healthz:
     get:
@@ -24,6 +36,367 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /arrivals:
+    get:
+      operationId: listArrivals
+      tags: [arrivals]
+      summary: List arrivals
+      description: List all truck arrivals, optionally filtered by status
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [waiting, in_yard, called, possible_exit, finished]
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: List of arrivals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Arrival"
+    post:
+      operationId: createArrival
+      tags: [arrivals]
+      summary: Register truck arrival
+      description: Register a new truck arrival at the gate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArrivalInput"
+      responses:
+        "201":
+          description: Arrival registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "400":
+          description: Invalid input
+
+  /arrivals/{id}:
+    get:
+      operationId: getArrival
+      tags: [arrivals]
+      summary: Get arrival by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Arrival details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateArrival
+      tags: [arrivals]
+      summary: Update arrival
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ArrivalUpdate"
+      responses:
+        "200":
+          description: Updated arrival
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: Not found
+
+  /arrivals/{id}/call-dock:
+    post:
+      operationId: callDock
+      tags: [arrivals]
+      summary: Call truck to dock
+      description: Send push notification to driver calling them to a specific dock
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DockCallInput"
+      responses:
+        "200":
+          description: Notification sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: Not found
+
+  /arrivals/{id}/confirm-arrival-dock:
+    post:
+      operationId: confirmArrivalAtDock
+      tags: [arrivals]
+      summary: Driver confirms arrival at dock
+      description: Driver taps button in PWA confirming they arrived at dock
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Confirmed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: Not found
+
+  /arrivals/{id}/checkout:
+    post:
+      operationId: checkoutArrival
+      tags: [arrivals]
+      summary: Manually checkout a truck
+      description: Operator confirms truck has left — closes the tracking record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Checked out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: Not found
+
+  /arrivals/{id}/geofence-exit:
+    post:
+      operationId: reportGeofenceExit
+      tags: [arrivals]
+      summary: Report geofence exit
+      description: System reports that the truck left the geofence area (possible exit)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Status updated to possible_exit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+
+  /arrivals/{id}/location:
+    post:
+      operationId: updateLocation
+      tags: [location]
+      summary: Update truck GPS location
+      description: Driver PWA sends current coordinates periodically (every 20s)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationInput"
+      responses:
+        "200":
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationUpdate"
+        "404":
+          description: Not found
+
+  /arrivals/link:
+    post:
+      operationId: linkArrival
+      tags: [arrivals]
+      summary: Driver links to arrival via plate or invoice number
+      description: Driver opens PWA, enters plate or invoice to link their device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkInput"
+      responses:
+        "200":
+          description: Linked arrival
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: No matching active arrival found
+
+  /arrivals/{id}/push-subscribe:
+    post:
+      operationId: subscribePush
+      tags: [push]
+      summary: Subscribe to push notifications
+      description: Register driver's device for Web Push notifications
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PushSubscriptionInput"
+      responses:
+        "200":
+          description: Subscribed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /push/vapid-key:
+    get:
+      operationId: getVapidKey
+      tags: [push]
+      summary: Get VAPID public key
+      description: Returns the server's VAPID public key for push subscription setup
+      responses:
+        "200":
+          description: VAPID public key
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VapidKey"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Dashboard statistics
+      description: Returns real-time stats for the dock panel header
+      responses:
+        "200":
+          description: Current yard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/YardStats"
+
+  /reports:
+    get:
+      operationId: getReports
+      tags: [reports]
+      summary: Historical arrival reports
+      description: Returns historical data with optional date range filters
+      parameters:
+        - name: from
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Report data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportPage"
+
+  /config:
+    get:
+      operationId: getConfig
+      tags: [config]
+      summary: Get system configuration
+      description: Returns geofence center, radius, and other settings
+      responses:
+        "200":
+          description: Configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemConfig"
+    patch:
+      operationId: updateConfig
+      tags: [config]
+      summary: Update system configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfigUpdate"
+      responses:
+        "200":
+          description: Updated config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemConfig"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +407,252 @@ components:
       required:
         - status
 
+    Arrival:
+      type: object
+      required:
+        - id
+        - plate
+        - driverName
+        - status
+        - createdAt
+      properties:
+        id:
+          type: integer
+        plate:
+          type: string
+          description: Truck license plate
+        driverName:
+          type: string
+        invoiceNumber:
+          type: ["string", "null"]
+          description: Nota fiscal or delivery schedule number
+        status:
+          type: string
+          enum: [waiting, in_yard, called, possible_exit, finished]
+        dockNumber:
+          type: ["integer", "null"]
+          description: Dock number when status is called
+        lastLat:
+          type: ["number", "null"]
+        lastLng:
+          type: ["number", "null"]
+        lastLocationAt:
+          type: ["string", "null"]
+          format: date-time
+        inYardAt:
+          type: ["string", "null"]
+          format: date-time
+        calledAt:
+          type: ["string", "null"]
+          format: date-time
+        finishedAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        elapsedMinutes:
+          type: ["integer", "null"]
+          description: Minutes since truck entered the yard
+        hasPushSubscription:
+          type: boolean
+
+    ArrivalInput:
+      type: object
+      required:
+        - plate
+        - driverName
+      properties:
+        plate:
+          type: string
+          minLength: 1
+        driverName:
+          type: string
+          minLength: 1
+        invoiceNumber:
+          type: string
+
+    ArrivalUpdate:
+      type: object
+      properties:
+        plate:
+          type: string
+        driverName:
+          type: string
+        invoiceNumber:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [waiting, in_yard, called, possible_exit, finished]
+
+    DockCallInput:
+      type: object
+      required:
+        - dockNumber
+      properties:
+        dockNumber:
+          type: integer
+          minimum: 1
+
+    LinkInput:
+      type: object
+      properties:
+        plate:
+          type: string
+        invoiceNumber:
+          type: string
+
+    LocationInput:
+      type: object
+      required:
+        - lat
+        - lng
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+
+    LocationUpdate:
+      type: object
+      required:
+        - status
+        - isInGeofence
+      properties:
+        status:
+          type: string
+        isInGeofence:
+          type: boolean
+        distanceMeters:
+          type: number
+
+    PushSubscriptionInput:
+      type: object
+      required:
+        - endpoint
+        - keys
+      properties:
+        endpoint:
+          type: string
+        keys:
+          type: object
+          required: [auth, p256dh]
+          properties:
+            auth:
+              type: string
+            p256dh:
+              type: string
+
+    VapidKey:
+      type: object
+      required:
+        - publicKey
+      properties:
+        publicKey:
+          type: string
+
+    YardStats:
+      type: object
+      required:
+        - totalInYard
+        - totalCalled
+        - totalWaiting
+        - avgWaitMinutes
+      properties:
+        totalInYard:
+          type: integer
+        totalCalled:
+          type: integer
+        totalWaiting:
+          type: integer
+        avgWaitMinutes:
+          type: ["integer", "null"]
+
+    ReportPage:
+      type: object
+      required:
+        - data
+        - total
+        - page
+        - limit
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArrivalReport"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    ArrivalReport:
+      type: object
+      required:
+        - id
+        - plate
+        - driverName
+        - status
+        - createdAt
+      properties:
+        id:
+          type: integer
+        plate:
+          type: string
+        driverName:
+          type: string
+        invoiceNumber:
+          type: ["string", "null"]
+        status:
+          type: string
+        dockNumber:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        inYardAt:
+          type: ["string", "null"]
+          format: date-time
+        finishedAt:
+          type: ["string", "null"]
+          format: date-time
+        durationMinutes:
+          type: ["integer", "null"]
+
+    SystemConfig:
+      type: object
+      required:
+        - geofenceLat
+        - geofenceLng
+        - geofenceRadiusMeters
+        - locationIntervalSeconds
+      properties:
+        geofenceLat:
+          type: number
+        geofenceLng:
+          type: number
+        geofenceRadiusMeters:
+          type: integer
+        locationIntervalSeconds:
+          type: integer
+
+    ConfigUpdate:
+      type: object
+      properties:
+        geofenceLat:
+          type: number
+        geofenceLng:
+          type: number
+        geofenceRadiusMeters:
+          type: integer
+        locationIntervalSeconds:
+          type: integer
+
+    SuccessResponse:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
