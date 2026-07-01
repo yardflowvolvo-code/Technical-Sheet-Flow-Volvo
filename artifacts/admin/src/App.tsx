@@ -73,14 +73,12 @@ function SignInPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background dark">
       <div className="flex flex-col items-center gap-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-primary text-primary-foreground p-2 rounded-md">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-6 h-6">
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <path d="M8 21h8M12 17v4" />
-            </svg>
-          </div>
-          <span className="text-2xl font-bold tracking-tight text-foreground">YARDFLOW</span>
+        <div className="bg-white rounded-2xl px-6 py-4 shadow-lg">
+          <img
+            src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
+            alt="YardFlow"
+            className="h-20 w-auto object-contain"
+          />
         </div>
         <SignIn routing="hash" signUpUrl={undefined} />
       </div>

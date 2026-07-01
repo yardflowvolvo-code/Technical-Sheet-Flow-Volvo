@@ -24,17 +24,15 @@ function SignInPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background dark">
       <div className="flex flex-col items-center gap-6">
-        <div className="flex items-center gap-3">
-          <div className="bg-primary text-primary-foreground p-2 rounded-md">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-6 h-6">
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <path d="M8 21h8M12 17v4" />
-            </svg>
+        <div className="flex flex-col items-center gap-2">
+          <div className="bg-white rounded-2xl px-6 py-4 shadow-lg">
+            <img
+              src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
+              alt="YardFlow"
+              className="h-20 w-auto object-contain"
+            />
           </div>
-          <div>
-            <span className="text-2xl font-bold tracking-tight text-foreground">YARDFLOW</span>
-            <p className="text-xs text-muted-foreground font-mono">SUPERADMIN</p>
-          </div>
+          <span className="text-xs text-primary font-mono tracking-widest uppercase font-semibold">Superadmin</span>
         </div>
         <SignIn routing="hash" signUpUrl={undefined} />
       </div>
@@ -48,18 +46,13 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground dark">
       <aside className="w-60 border-r border-border bg-card flex flex-col min-h-screen">
-        <div className="p-5 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-4 h-4">
-                <rect x="2" y="3" width="20" height="14" rx="2" />
-                <path d="M8 21h8M12 17v4" />
-              </svg>
-            </div>
-            <div>
-              <p className="font-bold text-sm leading-none text-foreground">YARDFLOW</p>
-              <p className="text-[9px] text-primary font-mono tracking-widest uppercase mt-0.5">Superadmin</p>
-            </div>
+        <div className="p-3 border-b border-border flex items-center justify-center">
+          <div className="bg-white rounded-xl px-3 py-1.5">
+            <img
+              src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
+              alt="YardFlow"
+              className="h-8 w-auto object-contain"
+            />
           </div>
         </div>
         <nav className="p-3 flex-1 flex flex-col gap-1">

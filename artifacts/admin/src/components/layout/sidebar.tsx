@@ -4,7 +4,6 @@ import {
   ClipboardList,
   BarChart3,
   Settings,
-  TerminalSquare,
   LogOut,
   Map,
 } from "lucide-react";
@@ -30,17 +29,13 @@ export default function Sidebar() {
 
   return (
     <div className="w-64 border-r border-border bg-card flex flex-col min-h-screen">
-      <div className="p-6 flex items-center gap-3 border-b border-border">
-        <div className="bg-primary text-primary-foreground p-1.5 rounded-md">
-          <TerminalSquare size={20} className="stroke-[2.5px]" />
-        </div>
-        <div>
-          <h1 className="font-bold text-lg tracking-tight leading-none text-foreground">
-            YARDFLOW
-          </h1>
-          <p className="text-[10px] text-muted-foreground uppercase font-mono tracking-widest mt-1">
-            Control Center
-          </p>
+      <div className="p-4 border-b border-border flex items-center justify-center">
+        <div className="bg-white rounded-xl px-3 py-2">
+          <img
+            src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
+            alt="YardFlow"
+            className="h-10 w-auto object-contain"
+          />
         </div>
       </div>
 

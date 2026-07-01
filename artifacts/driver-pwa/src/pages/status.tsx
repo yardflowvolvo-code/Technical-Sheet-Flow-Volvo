@@ -21,9 +21,9 @@ interface StatusPageProps {
 const STATUS_CONFIG = {
   waiting: {
     label: "Aguardando",
-    color: "text-amber-400",
-    bg: "bg-amber-500/10 border-amber-500/30",
-    dot: "bg-amber-400",
+    color: "text-blue-400",
+    bg: "bg-blue-500/10 border-blue-500/30",
+    dot: "bg-blue-400",
     description: "Seu cadastro foi registrado. Aguarde ser chamado.",
   },
   in_yard: {
@@ -35,9 +35,9 @@ const STATUS_CONFIG = {
   },
   called: {
     label: "Chamado!",
-    color: "text-amber-300",
-    bg: "bg-amber-500/20 border-amber-400/60",
-    dot: "bg-amber-300 animate-pulse",
+    color: "text-blue-300",
+    bg: "bg-blue-500/20 border-blue-400/60",
+    dot: "bg-blue-300 animate-pulse",
     description: "Dirija-se à doca indicada abaixo.",
   },
   possible_exit: {
@@ -222,10 +222,10 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
       {arrival.status === "called" && arrival.dockNumber && (
         <div
           data-testid="dock-number-display"
-          className="bg-amber-500 rounded-2xl p-6 text-center mb-4"
+          className="bg-blue-600 rounded-2xl p-6 text-center mb-4"
         >
-          <p className="text-amber-950 font-medium text-sm mb-1">Doca</p>
-          <p className="text-amber-950 font-black text-5xl">{arrival.dockNumber}</p>
+          <p className="text-white font-medium text-sm mb-1">Doca</p>
+          <p className="text-white font-black text-5xl">{arrival.dockNumber}</p>
         </div>
       )}
 
