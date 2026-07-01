@@ -13,9 +13,7 @@ import {
   DeleteCompanyUserParams,
 } from "@workspace/api-zod";
 import { requireAuth, requireCompany, requireRole } from "../middlewares/auth";
-
 const router = Router();
-
 function userToResponse(u: typeof companyUsersTable.$inferSelect) {
   return {
     id: u.id,
@@ -27,22 +25,18 @@ function userToResponse(u: typeof companyUsersTable.$inferSelect) {
     createdAt: u.createdAt.toISOString(),
   };
 }
-
-router.get("/api/me", requireAuth, async (req, res) => {
+router.get("/me", requireAuth, async (req, res) => {
   const clerkUserId = req.clerkUserId!;
-
   const [superadmin] = await db
     .select()
     .from(superadminsTable)
     .where(eq(superadminsTable.clerkUserId, clerkUserId))
     .limit(1);
-
   const [companyUser] = await db
     .select()
     .from(companyUsersTable)
     .where(eq(companyUsersTable.clerkUserId, clerkUserId))
     .limit(1);
-
   let company = null;
   if (companyUser) {
     const [c] = await db
@@ -62,7 +56,6 @@ router.get("/api/me", requireAuth, async (req, res) => {
       };
     }
   }
-
   res.json({
     clerkUserId,
     isSuperadmin: !!superadmin,
@@ -70,9 +63,8 @@ router.get("/api/me", requireAuth, async (req, res) => {
     company: company ?? undefined,
   });
 });
-
 router.get(
-  "/api/company-users",
+  "/company-users",
   requireCompany,
   requireRole("gestor"),
   async (req, res) => {
@@ -84,9 +76,8 @@ router.get(
     res.json(rows.map(userToResponse));
   }
 );
-
 router.post(
-  "/api/company-users",
+  "/company-users",
   requireCompany,
   requireRole("gestor"),
   async (req, res) => {
@@ -102,9 +93,8 @@ router.post(
     res.status(201).json(userToResponse(user!));
   }
 );
-
 router.patch(
-  "/api/company-users/:id",
+  "/company-users/:id",
   requireCompany,
   requireRole("gestor"),
   async (req, res) => {
@@ -126,9 +116,8 @@ router.patch(
     res.json(userToResponse(user));
   }
 );
-
 router.delete(
-  "/api/company-users/:id",
+  "/company-users/:id",
   requireCompany,
   requireRole("gestor"),
   async (req, res) => {
@@ -148,5 +137,4 @@ router.delete(
     res.json({ success: true });
   }
 );
-
 export default router;
