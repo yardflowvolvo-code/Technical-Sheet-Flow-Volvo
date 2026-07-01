@@ -54,7 +54,7 @@ async function withPushFlag(arrivals: (typeof arrivalsTable.$inferSelect)[]) {
   return arrivals.map((a) => arrivalToResponse(a, subSet.has(a.id)));
 }
 
-router.get("/api/arrivals", async (req, res) => {
+router.get("/arrivals", async (req, res) => {
   const { status, active } = req.query;
   const conditions = [];
 
@@ -89,7 +89,7 @@ router.get("/api/arrivals", async (req, res) => {
   res.json(result);
 });
 
-router.post("/api/arrivals", async (req, res) => {
+router.post("/arrivals", async (req, res) => {
   const parsed = CreateArrivalBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -103,11 +103,11 @@ router.post("/api/arrivals", async (req, res) => {
   res.status(201).json(arrivalToResponse(arrival!, false));
 });
 
-router.get("/api/arrivals/link", (req, res) => {
+router.get("/arrivals/link", (req, res) => {
   res.status(405).json({ error: "Use POST" });
 });
 
-router.post("/api/arrivals/link", async (req, res) => {
+router.post("/arrivals/link", async (req, res) => {
   const parsed = LinkArrivalBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -150,7 +150,7 @@ router.post("/api/arrivals/link", async (req, res) => {
   res.json(result[0]);
 });
 
-router.get("/api/arrivals/:id", async (req, res) => {
+router.get("/arrivals/:id", async (req, res) => {
   const parsed = GetArrivalParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -168,7 +168,7 @@ router.get("/api/arrivals/:id", async (req, res) => {
   res.json(result[0]);
 });
 
-router.patch("/api/arrivals/:id", async (req, res) => {
+router.patch("/arrivals/:id", async (req, res) => {
   const parsedParams = UpdateArrivalParams.safeParse({ id: Number(req.params.id) });
   const parsedBody = UpdateArrivalBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
@@ -188,7 +188,7 @@ router.patch("/api/arrivals/:id", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/api/arrivals/:id/call-dock", async (req, res) => {
+router.post("/arrivals/:id/call-dock", async (req, res) => {
   const parsedParams = CallDockParams.safeParse({ id: Number(req.params.id) });
   const parsedBody = CallDockBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
@@ -234,7 +234,7 @@ router.post("/api/arrivals/:id/call-dock", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/api/arrivals/:id/confirm-arrival-dock", async (req, res) => {
+router.post("/arrivals/:id/confirm-arrival-dock", async (req, res) => {
   const parsed = ConfirmArrivalAtDockParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -252,7 +252,7 @@ router.post("/api/arrivals/:id/confirm-arrival-dock", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/api/arrivals/:id/checkout", async (req, res) => {
+router.post("/arrivals/:id/checkout", async (req, res) => {
   const parsed = CheckoutArrivalParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -271,7 +271,7 @@ router.post("/api/arrivals/:id/checkout", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/api/arrivals/:id/geofence-exit", async (req, res) => {
+router.post("/arrivals/:id/geofence-exit", async (req, res) => {
   const parsed = ReportGeofenceExitParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
