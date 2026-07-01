@@ -6,7 +6,7 @@ import { requireCompany, requireSuperadmin } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/api/subscriptions/current", requireCompany, async (req, res) => {
+router.get("/subscriptions/current", requireCompany, async (req, res) => {
   const [sub] = await db
     .select()
     .from(subscriptionsTable)
@@ -26,7 +26,7 @@ router.get("/api/subscriptions/current", requireCompany, async (req, res) => {
   });
 });
 
-router.post("/api/subscriptions/checkout", requireCompany, async (req, res) => {
+router.post("/subscriptions/checkout", requireCompany, async (req, res) => {
   const [company] = await db
     .select()
     .from(companiesTable)
@@ -99,7 +99,7 @@ router.post("/api/subscriptions/checkout", requireCompany, async (req, res) => {
 });
 
 // Webhook — public endpoint (no auth), verified by MP signature
-router.post("/api/webhooks/mercadopago", async (req, res) => {
+router.post("/webhooks/mercadopago", async (req, res) => {
   const { type, data } = req.body as { type?: string; data?: { id?: string } };
 
   if (type === "subscription_preapproval" && data?.id) {
