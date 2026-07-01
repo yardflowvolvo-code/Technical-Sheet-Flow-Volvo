@@ -3,10 +3,8 @@ import { db } from "@workspace/db";
 import { arrivalsTable } from "@workspace/db";
 import { and, gte, lte, sql } from "drizzle-orm";
 import { GetReportsQueryParams } from "@workspace/api-zod";
-
 const router = Router();
-
-router.get("/api/reports", async (req, res) => {
+router.get("/reports", async (req, res) => {
   const parsed = GetReportsQueryParams.safeParse({
     from: req.query.from,
     to: req.query.to,
@@ -17,10 +15,8 @@ router.get("/api/reports", async (req, res) => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-
   const { from, to, page = 1, limit = 50 } = parsed.data;
   const conditions = [];
-
   if (from) {
     conditions.push(gte(arrivalsTable.createdAt, new Date(from)));
   }
@@ -29,17 +25,13 @@ router.get("/api/reports", async (req, res) => {
     toDate.setHours(23, 59, 59, 999);
     conditions.push(lte(arrivalsTable.createdAt, toDate));
   }
-
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
   const [countResult] = await db
     .select({ count: sql<number>`cast(count(*) as int)` })
     .from(arrivalsTable)
     .where(whereClause);
-
   const total = countResult?.count ?? 0;
   const offset = (page - 1) * limit;
-
   const rows = await db
     .select()
     .from(arrivalsTable)
@@ -47,7 +39,6 @@ router.get("/api/reports", async (req, res) => {
     .orderBy(sql`${arrivalsTable.createdAt} DESC`)
     .limit(limit)
     .offset(offset);
-
   const data = rows.map((r) => {
     let durationMinutes: number | null = null;
     if (r.inYardAt && r.finishedAt) {
@@ -68,8 +59,6 @@ router.get("/api/reports", async (req, res) => {
       durationMinutes,
     };
   });
-
   res.json({ data, total, page, limit });
 });
-
 export default router;
