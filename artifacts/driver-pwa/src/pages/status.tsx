@@ -246,14 +246,14 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground text-sm">Motorista</span>
-            <span data-testid="text-driver" {data-testid="text-driver" className="text-foreground text-sm">
+            <span data-testid="text-driver" className="text-foreground text-sm">
               {arrival.driverName}
             </span>
           </div>
           {arrival.invoiceNumber && (
             <div className="flex justify-between">
               <span className="text-muted-foreground text-sm">Nota Fiscal</span>
-              <span data-testid="text-invoice" {data-testid="text-driver" className="text-foreground text-sm">
+              <span data-testid="text-invoice" className="text-foreground text-sm">
                 {arrival.invoiceNumber}
               </span>
             </div>
@@ -261,7 +261,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
           {arrival.elapsedMinutes !== null && arrival.elapsedMinutes !== undefined && (
             <div className="flex justify-between">
               <span className="text-muted-foreground text-sm">Tempo no pátio</span>
-              <span data-testid="text-elapsed" {data-testid="text-driver" className="text-foreground text-sm">
+              <span data-testid="text-elapsed" className="text-foreground text-sm">
                 {arrival.elapsedMinutes < 60
                   ? `${arrival.elapsedMinutes} min`
                   : `${Math.floor(arrival.elapsedMinutes / 60)}h ${arrival.elapsedMinutes % 60}min`}

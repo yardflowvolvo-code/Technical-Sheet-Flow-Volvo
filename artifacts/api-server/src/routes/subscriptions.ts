@@ -49,6 +49,14 @@ router.post("/api/subscriptions/checkout", requireCompany, async (req, res) => {
   }
 
   try {
+    // PUBLIC_APP_URL should point to the admin frontend (where the user lands after checkout).
+    // PUBLIC_API_URL should point to this API server (where MP sends webhook notifications).
+    // On Render, PUBLIC_API_URL can default to RENDER_EXTERNAL_URL, which Render provides
+    // automatically for every Web Service.
+    const appUrl = process.env["PUBLIC_APP_URL"] ?? "https://yardflow.com.br";
+    const apiUrl =
+      process.env["PUBLIC_API_URL"] ?? process.env["RENDER_EXTERNAL_URL"];
+
     const body = {
       reason: `Yardflow — ${company.name}`,
       auto_recurring: {
@@ -57,11 +65,12 @@ router.post("/api/subscriptions/checkout", requireCompany, async (req, res) => {
         transaction_amount: company.planMonthlyPrice,
         currency_id: "BRL",
       },
-      back_url: process.env["REPLIT_DOMAINS"]
-        ? `https://${process.env["REPLIT_DOMAINS"].split(",")[0]}/`
-        : "https://yardflow.com.br/",
-      notification_url: process.env["REPLIT_DOMAINS"]
-        ? `https://${process.env["REPLIT_DOMAINS"].split(",")[0]}/api/webhooks/mercadopago`
+      // Ties the MP subscription back to our company row — required for the webhook
+      // handler below to know which company to update.
+      external_reference: String(company.id),
+      back_url: `${appUrl.replace(/\/$/, "")}/`,
+      notification_url: apiUrl
+        ? `${apiUrl.replace(/\/$/, "")}/api/webhooks/mercadopago`
         : undefined,
     };
 

@@ -1,0 +1,66 @@
+# Render Blueprint for Yardflow.
+#
+# This defines a SINGLE web service that runs the Express API and serves
+# the three built frontends (admin, driver-pwa, superadmin) from the same
+# origin. This avoids cross-origin cookie/CORS issues with Clerk auth and
+# matches the BASE_PATH routing already built into each frontend's
+# vite.config.ts.
+#
+# Usage: Render Dashboard -> New -> Blueprint -> point at this repo.
+# Any env var below with `sync: false` must be filled in manually in the
+# Render dashboard after the first deploy (see DEPLOY.md for where to get
+# each value).
+
+services:
+  - type: web
+    name: yardflow
+    runtime: node
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: >-
+      pnpm install --frozen-lockfile &&
+      BASE_PATH=/ pnpm --filter @workspace/admin run build &&
+      BASE_PATH=/driver/ pnpm --filter @workspace/driver-pwa run build &&
+      BASE_PATH=/superadmin/ pnpm --filter @workspace/superadmin run build &&
+      pnpm --filter @workspace/api-server run build
+    startCommand: pnpm --filter @workspace/api-server run start
+    healthCheckPath: /api/healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Supabase Postgres connection string (Session Pooler, port 6543 —
+      # see DEPLOY.md). Required.
+      - key: DATABASE_URL
+        sync: false
+
+      # Clerk (dashboard.clerk.com -> API Keys). Required.
+      - key: CLERK_SECRET_KEY
+        sync: false
+      - key: VITE_CLERK_PUBLISHABLE_KEY
+        sync: false
+
+      # Web Push (VAPID). Generate once with:
+      #   pnpm dlx web-push generate-vapid-keys
+      # and paste the same pair here every deploy — if these change, every
+      # driver's existing push subscription silently stops working.
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_MAILTO
+        value: mailto:admin@yardflow.com.br
+
+      # Mercado Pago (dashboard.mercadopago.com.br -> credenciais de
+      # produção). Optional at first — checkout returns a demo URL until
+      # this is set.
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        sync: false
+
+      # Public URL of this exact service, e.g. https://yardflow.onrender.com
+      # or your custom domain once attached. Used to build Mercado Pago's
+      # back_url/notification_url. If unset, falls back to Render's own
+      # RENDER_EXTERNAL_URL (auto-provided), which is a fine default.
+      - key: PUBLIC_APP_URL
+        sync: false
