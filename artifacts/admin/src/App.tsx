@@ -8,6 +8,7 @@ import { setAuthTokenGetter } from "@workspace/api-client-react";
 import NotFound from "@/pages/not-found";
 import Portaria from "@/pages/portaria";
 import Doca from "@/pages/doca";
+import Mapa from "@/pages/mapa";
 import Relatorios from "@/pages/relatorios";
 import Configuracoes from "@/pages/configuracoes";
 import Sidebar from "@/components/layout/sidebar";
@@ -51,6 +52,9 @@ function Router() {
       </Route>
       <Route path="/doca">
         <Layout><Doca /></Layout>
+      </Route>
+      <Route path="/mapa">
+        <Layout><Mapa /></Layout>
       </Route>
       <Route path="/relatorios">
         <Layout><Relatorios /></Layout>

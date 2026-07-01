@@ -6,6 +6,7 @@ import {
   Settings,
   TerminalSquare,
   LogOut,
+  Map,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser, useClerk } from "@clerk/react";
@@ -18,6 +19,7 @@ export default function Sidebar() {
   const navItems = [
     { href: "/portaria", label: "Portaria", icon: ClipboardList },
     { href: "/doca", label: "Gestão de Pátio", icon: Truck },
+    { href: "/mapa", label: "Mapa do Pátio", icon: Map },
     { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
     { href: "/configuracoes", label: "Configurações", icon: Settings },
   ];
