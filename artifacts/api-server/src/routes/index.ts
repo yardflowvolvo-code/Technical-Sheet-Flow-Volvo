@@ -9,18 +9,15 @@ import configRouter from "./config";
 import companiesRouter from "./companies";
 import companyUsersRouter from "./companyUsers";
 import subscriptionsRouter from "./subscriptions";
-
 const router: IRouter = Router();
-
-router.use(healthRouter);
-router.use(arrivalsRouter);
-router.use(locationRouter);
-router.use(pushRouter);
-router.use(statsRouter);
-router.use(reportsRouter);
-router.use(configRouter);
-router.use(companiesRouter);
-router.use(companyUsersRouter);
-router.use(subscriptionsRouter);
-
+router.use("/api", healthRouter);
+router.use("/api", arrivalsRouter);
+router.use("/api", locationRouter);
+router.use("/api", pushRouter);
+router.use("/api", statsRouter);
+router.use("/api", reportsRouter);
+router.use("/api", configRouter);
+router.use("/api", companiesRouter);
+router.use("/api", companyUsersRouter);
+router.use("/api", subscriptionsRouter);
 export default router;
