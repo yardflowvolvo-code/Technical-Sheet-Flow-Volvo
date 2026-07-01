@@ -11,9 +11,7 @@ import {
   UpdateCompanyBody,
 } from "@workspace/api-zod";
 import { requireSuperadmin } from "../middlewares/auth";
-
 const router = Router();
-
 function companyToResponse(c: typeof companiesTable.$inferSelect) {
   return {
     id: c.id,
@@ -25,13 +23,11 @@ function companyToResponse(c: typeof companiesTable.$inferSelect) {
     createdAt: c.createdAt.toISOString(),
   };
 }
-
-router.get("/api/companies", requireSuperadmin, async (_req, res) => {
+router.get("/companies", requireSuperadmin, async (_req, res) => {
   const rows = await db.select().from(companiesTable).orderBy(companiesTable.createdAt);
   res.json(rows.map(companyToResponse));
 });
-
-router.post("/api/companies", requireSuperadmin, async (req, res) => {
+router.post("/companies", requireSuperadmin, async (req, res) => {
   const parsed = CreateCompanyBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -44,8 +40,7 @@ router.post("/api/companies", requireSuperadmin, async (req, res) => {
     .returning();
   res.status(201).json(companyToResponse(company!));
 });
-
-router.get("/api/companies/:id", requireSuperadmin, async (req, res) => {
+router.get("/companies/:id", requireSuperadmin, async (req, res) => {
   const parsed = GetCompanyParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -61,8 +56,7 @@ router.get("/api/companies/:id", requireSuperadmin, async (req, res) => {
   }
   res.json(companyToResponse(company));
 });
-
-router.patch("/api/companies/:id", requireSuperadmin, async (req, res) => {
+router.patch("/companies/:id", requireSuperadmin, async (req, res) => {
   const parsedParams = UpdateCompanyParams.safeParse({ id: Number(req.params.id) });
   const parsedBody = UpdateCompanyBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
@@ -80,8 +74,7 @@ router.patch("/api/companies/:id", requireSuperadmin, async (req, res) => {
   }
   res.json(companyToResponse(company));
 });
-
-router.post("/api/companies/:id/suspend", requireSuperadmin, async (req, res) => {
+router.post("/companies/:id/suspend", requireSuperadmin, async (req, res) => {
   const parsed = SuspendCompanyParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -98,8 +91,7 @@ router.post("/api/companies/:id/suspend", requireSuperadmin, async (req, res) =>
   }
   res.json(companyToResponse(company));
 });
-
-router.post("/api/companies/:id/activate", requireSuperadmin, async (req, res) => {
+router.post("/companies/:id/activate", requireSuperadmin, async (req, res) => {
   const parsed = ActivateCompanyParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -116,5 +108,4 @@ router.post("/api/companies/:id/activate", requireSuperadmin, async (req, res) =
   }
   res.json(companyToResponse(company));
 });
-
 export default router;
