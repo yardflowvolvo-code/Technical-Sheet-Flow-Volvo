@@ -34,7 +34,7 @@ function AuthTokenSync() {
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen w-full bg-background text-foreground dark">
+    <div className="flex min-h-screen w-full bg-background text-foreground">
       <Sidebar />
       <main className="flex-1 overflow-hidden flex flex-col">
         {children}
@@ -71,7 +71,7 @@ function Router() {
 
 function SignInPage() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background dark">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-6">
         <div className="bg-white rounded-2xl px-6 py-4 shadow-lg">
           <img
@@ -90,7 +90,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn } = useAuth();
   if (!isLoaded) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-background dark">
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
         <span className="h-8 w-8 rounded-full border-2 border-primary border-r-transparent animate-spin" />
       </div>
     );

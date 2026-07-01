@@ -28,8 +28,8 @@ export default function Sidebar() {
     : "OP";
 
   return (
-    <div className="w-64 border-r border-border bg-card flex flex-col min-h-screen">
-      <div className="p-4 border-b border-border flex items-center justify-center">
+    <div className="w-64 border-r border-sidebar-border bg-sidebar flex flex-col min-h-screen">
+      <div className="p-4 border-b border-sidebar-border flex items-center justify-center">
         <div className="bg-white rounded-xl px-3 py-2">
           <img
             src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
@@ -52,11 +52,11 @@ export default function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary border border-transparent"
+                    ? "bg-sidebar-primary/20 text-sidebar-primary border border-sidebar-primary/30"
+                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent border border-transparent"
                 )}
               >
-                <Icon size={18} className={cn(isActive ? "text-primary" : "text-muted-foreground")} />
+                <Icon size={18} className={cn(isActive ? "text-sidebar-primary" : "text-sidebar-foreground/60")} />
                 {item.label}
               </Link>
             );
@@ -64,27 +64,27 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      <div className="p-4 border-t border-border bg-sidebar-accent/50">
+      <div className="p-4 border-t border-sidebar-border bg-sidebar-accent/40">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-secondary border border-border flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-8 h-8 rounded-full bg-sidebar-accent border border-sidebar-border flex items-center justify-center overflow-hidden shrink-0">
             {user?.imageUrl ? (
               <img src={user.imageUrl} alt={initials} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-xs font-bold text-muted-foreground uppercase">{initials}</span>
+              <span className="text-xs font-bold text-sidebar-foreground/80 uppercase">{initials}</span>
             )}
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-foreground truncate">
+            <p className="text-sm font-medium text-sidebar-foreground truncate">
               {user?.fullName ?? user?.primaryEmailAddress?.emailAddress ?? "Operador"}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-              <p className="text-xs text-muted-foreground">Online</p>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+              <p className="text-xs text-sidebar-foreground/60">Online</p>
             </div>
           </div>
           <button
             onClick={() => signOut()}
-            className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+            className="shrink-0 p-1.5 rounded-md text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
             title="Sair"
           >
             <LogOut size={16} />

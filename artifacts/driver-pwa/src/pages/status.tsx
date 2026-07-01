@@ -49,7 +49,7 @@ const STATUS_CONFIG = {
   },
   finished: {
     label: "Finalizado",
-    color: "text-gray-400",
+    color: "text-muted-foreground",
     bg: "bg-gray-800 border-gray-700",
     dot: "bg-gray-400",
     description: "Sua visita foi concluída. Obrigado!",
@@ -164,20 +164,20 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-gray-400 text-sm">Carregando...</div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground text-sm">Carregando...</div>
       </div>
     );
   }
 
   if (!arrival) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-6 gap-4">
-        <p className="text-gray-400">Registro não encontrado.</p>
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 gap-4">
+        <p className="text-muted-foreground">Registro não encontrado.</p>
         <Button
           onClick={handleUnlink}
           variant="outline"
-          className="border-gray-700 text-gray-300"
+          className="border-border text-foreground"
         >
           Vincular novamente
         </Button>
@@ -188,17 +188,17 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   const statusCfg = STATUS_CONFIG[arrival.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.waiting;
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col p-5 max-w-sm mx-auto">
+    <div className="min-h-screen bg-background flex flex-col p-5 max-w-sm mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 pt-2">
         <div>
-          <h1 className="text-white font-bold text-lg">Yardflow</h1>
-          <p className="text-gray-500 text-xs">Sistema de Pátio</p>
+          <h1 className="text-foreground font-bold text-lg">Yardflow</h1>
+          <p className="text-muted-foreground text-xs">Sistema de Pátio</p>
         </div>
         <button
           data-testid="button-unlink"
           onClick={handleUnlink}
-          className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           Desvincular
         </button>
@@ -215,7 +215,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
             {statusCfg.label}
           </span>
         </div>
-        <p className="text-gray-300 text-sm leading-relaxed">{statusCfg.description}</p>
+        <p className="text-foreground/80 text-sm leading-relaxed">{statusCfg.description}</p>
       </div>
 
       {/* Called to Dock */}
@@ -230,38 +230,38 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
       )}
 
       {/* Truck Info */}
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-4">
-        <h3 className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-3">
+      <div className="bg-card border border-border rounded-2xl p-5 mb-4">
+        <h3 className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-3">
           Seus dados
         </h3>
         <div className="space-y-2">
           <div className="flex justify-between">
-            <span className="text-gray-500 text-sm">Placa</span>
+            <span className="text-muted-foreground text-sm">Placa</span>
             <span
               data-testid="text-plate"
-              className="text-white font-mono font-semibold text-sm"
+              className="text-foreground font-mono font-semibold text-sm"
             >
               {arrival.plate}
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-500 text-sm">Motorista</span>
-            <span data-testid="text-driver" className="text-white text-sm">
+            <span className="text-muted-foreground text-sm">Motorista</span>
+            <span data-testid="text-driver" {data-testid="text-driver" className="text-foreground text-sm">
               {arrival.driverName}
             </span>
           </div>
           {arrival.invoiceNumber && (
             <div className="flex justify-between">
-              <span className="text-gray-500 text-sm">Nota Fiscal</span>
-              <span data-testid="text-invoice" className="text-white text-sm">
+              <span className="text-muted-foreground text-sm">Nota Fiscal</span>
+              <span data-testid="text-invoice" {data-testid="text-driver" className="text-foreground text-sm">
                 {arrival.invoiceNumber}
               </span>
             </div>
           )}
           {arrival.elapsedMinutes !== null && arrival.elapsedMinutes !== undefined && (
             <div className="flex justify-between">
-              <span className="text-gray-500 text-sm">Tempo no pátio</span>
-              <span data-testid="text-elapsed" className="text-white text-sm">
+              <span className="text-muted-foreground text-sm">Tempo no pátio</span>
+              <span data-testid="text-elapsed" {data-testid="text-driver" className="text-foreground text-sm">
                 {arrival.elapsedMinutes < 60
                   ? `${arrival.elapsedMinutes} min`
                   : `${Math.floor(arrival.elapsedMinutes / 60)}h ${arrival.elapsedMinutes % 60}min`}
@@ -273,9 +273,9 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
 
       {/* Location status */}
       {arrival.lastLocationAt && (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
+        <div className="bg-card border border-border rounded-xl px-4 py-3 mb-4 flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-green-400" />
-          <span className="text-gray-400 text-xs">Localização ativa</span>
+          <span className="text-muted-foreground text-xs">Localização ativa</span>
         </div>
       )}
 

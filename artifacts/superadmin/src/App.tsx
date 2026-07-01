@@ -22,7 +22,7 @@ function AuthTokenSync() {
 
 function SignInPage() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background dark">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-6">
         <div className="flex flex-col items-center gap-2">
           <div className="bg-white rounded-2xl px-6 py-4 shadow-lg">
@@ -44,9 +44,9 @@ function Layout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
   return (
-    <div className="flex min-h-screen w-full bg-background text-foreground dark">
-      <aside className="w-60 border-r border-border bg-card flex flex-col min-h-screen">
-        <div className="p-3 border-b border-border flex items-center justify-center">
+    <div className="flex min-h-screen w-full bg-background text-foreground">
+      <aside className="w-60 border-r border-sidebar-border bg-sidebar flex flex-col min-h-screen">
+        <div className="p-3 border-b border-sidebar-border flex items-center justify-center">
           <div className="bg-white rounded-xl px-3 py-1.5">
             <img
               src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
@@ -58,16 +58,16 @@ function Layout({ children }: { children: React.ReactNode }) {
         <nav className="p-3 flex-1 flex flex-col gap-1">
           <button
             onClick={() => setLocation("/")}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-left w-full transition-colors ${location === "/" ? "bg-primary/10 text-primary border border-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-secondary border border-transparent"}`}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-left w-full transition-colors ${location === "/" ? "bg-sidebar-primary/20 text-sidebar-primary border border-sidebar-primary/30" : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent border border-transparent"}`}
           >
             <span>🏢</span>
             Empresas
           </button>
         </nav>
-        <div className="p-3 border-t border-border">
+        <div className="p-3 border-t border-sidebar-border">
           <button
             onClick={() => signOut?.()}
-            className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors w-full"
+            className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors w-full"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -87,7 +87,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn } = useAuth();
   if (!isLoaded) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-background dark">
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
         <span className="h-8 w-8 rounded-full border-2 border-primary border-r-transparent animate-spin" />
       </div>
     );
