@@ -25,12 +25,12 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     unlockAudio();
-    if (!plate && !invoice) {
+    if (!plate.trim() || !invoice.trim()) {
       toast({ title: t("missingFields"), variant: "destructive" });
       return;
     }
     linkArrival.mutate(
-      { data: { plate: plate.toUpperCase() || undefined, invoiceNumber: invoice || undefined } },
+      { data: { plate: plate.toUpperCase(), invoiceNumber: invoice } },
       {
         onSuccess: (arrival) => {
           localStorage.setItem("yardflow_arrival_id", String(arrival.id));
@@ -80,7 +80,7 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="plate" className="text-foreground text-sm">
-                {t("plateLabel")}
+                {t("plateLabel")} <span className="text-status-alert">*</span>
               </Label>
               <Input
                 id="plate"
@@ -90,18 +90,13 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
                 value={plate}
                 onChange={(e) => setPlate(e.target.value.toUpperCase())}
                 maxLength={10}
+                required
               />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-border" />
-              <span className="text-muted-foreground text-xs uppercase tracking-wide">{t("or")}</span>
-              <div className="flex-1 h-px bg-border" />
             </div>
 
             <div>
               <Label htmlFor="invoice" className="text-foreground text-sm">
-                {t("invoiceLabel")}
+                {t("invoiceLabel")} <span className="text-status-alert">*</span>
               </Label>
               <Input
                 id="invoice"
@@ -110,6 +105,7 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
                 placeholder={t("invoicePlaceholder")}
                 value={invoice}
                 onChange={(e) => setInvoice(e.target.value)}
+                required
               />
             </div>
 
