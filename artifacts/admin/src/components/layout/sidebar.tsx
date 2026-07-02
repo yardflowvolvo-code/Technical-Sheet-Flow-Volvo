@@ -37,7 +37,7 @@ function Brand() {
           <span className="text-[#8FB0F5]">Flow</span>
         </p>
         <p className="text-sidebar-foreground/50 text-[10px] uppercase tracking-widest mt-1">
-          Yard Management
+          Sistema de Pátio
         </p>
       </div>
     </div>

@@ -143,7 +143,7 @@ function SignInPage() {
             <span className="text-[#8FB0F5]">Flow</span>
           </p>
           <p className="relative text-white/40 text-[10px] uppercase tracking-widest mt-1">
-            Yard Management
+            Sistema de Pátio
           </p>
           <div className="relative w-10 h-px bg-white/15 my-4" />
           <h1 className="relative text-white font-semibold text-lg">Bem-vindo(a) de volta</h1>
