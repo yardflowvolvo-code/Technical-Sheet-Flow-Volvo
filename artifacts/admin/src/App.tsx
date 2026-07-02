@@ -131,30 +131,41 @@ function SignInPage() {
       <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
 
-      <div className="flex flex-col items-center gap-6 relative w-full max-w-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-[#0051EC] shrink-0">
-            <Truck size={22} className="text-white" />
+      <div className="w-full max-w-sm relative">
+        {/* Brand panel */}
+        <div className="w-full bg-[#0051EC] rounded-t-2xl px-6 pt-8 pb-7 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top,white,transparent_65%)]" />
+          <div className="relative flex items-center justify-center h-14 w-14 rounded-2xl bg-white/15 border border-white/20 mb-3">
+            <Truck size={26} className="text-white" />
           </div>
-          <div className="leading-none notranslate" translate="no">
-            <p className="font-bold text-2xl tracking-tight text-foreground">
-              <span>Yard</span>
-              <span className="text-[#0051EC]">Flow</span>
-            </p>
-            <p className="text-muted-foreground text-[10px] uppercase tracking-widest mt-1">
-              Yard Management
-            </p>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <h1 className="text-lg font-semibold text-foreground">Bem-vindo(a) de volta</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <p className="relative notranslate font-bold text-2xl tracking-tight text-white" translate="no">
+            <span>Yard</span>
+            <span className="text-white/70">Flow</span>
+          </p>
+          <p className="relative text-white/50 text-[10px] uppercase tracking-widest mt-1">
+            Yard Management
+          </p>
+          <div className="relative w-10 h-px bg-white/25 my-4" />
+          <h1 className="relative text-white font-semibold text-lg">Bem-vindo(a) de volta</h1>
+          <p className="relative text-white/70 text-sm mt-1">
             Entre com sua conta para acessar o painel.
           </p>
         </div>
 
-        <SignIn routing="hash" signUpUrl={undefined} />
+        {/* Sign-in card, flush with the panel above */}
+        <div className="w-full bg-white rounded-b-2xl shadow-xl overflow-hidden">
+          <SignIn
+            routing="hash"
+            signUpUrl={undefined}
+            appearance={{
+              elements: {
+                rootBox: "w-full flex justify-center",
+                cardBox: "w-full shadow-none",
+                card: "w-full shadow-none border-0 rounded-none py-6",
+              },
+            }}
+          />
+        </div>
       </div>
     </div>
   );
