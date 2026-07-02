@@ -127,7 +127,7 @@ function SignInPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-6">
-        <div className="bg-white rounded-2xl px-6 py-4 shadow-lg">
+        <div className="bg-[#fdfdfd] rounded-2xl px-6 py-4 shadow-lg">
           <img
             src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
             alt="YardFlow"

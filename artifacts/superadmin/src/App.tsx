@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useEffect } from "react";
 import { SignIn, useAuth } from "@clerk/react";
+import { Truck } from "lucide-react";
 import { setAuthTokenGetter } from "@workspace/api-client-react";
 import NotFound from "@/pages/not-found";
 import Companies from "@/pages/companies";
@@ -25,7 +26,7 @@ function SignInPage() {
     <div className="min-h-screen w-full flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-6">
         <div className="flex flex-col items-center gap-2">
-          <div className="bg-white rounded-2xl px-6 py-4 shadow-lg">
+          <div className="bg-[#fdfdfd] rounded-2xl px-6 py-4 shadow-lg">
             <img
               src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
               alt="YardFlow"
@@ -46,14 +47,14 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground">
       <aside className="w-60 border-r border-sidebar-border bg-sidebar flex flex-col min-h-screen">
-        <div className="p-3 border-b border-sidebar-border flex items-center justify-center">
-          <div className="bg-white rounded-xl px-3 py-1.5">
-            <img
-              src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
-              alt="YardFlow"
-              className="h-8 w-auto object-contain"
-            />
+        <div className="p-4 border-b border-sidebar-border flex items-center gap-2.5">
+          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-[#0051EC] shrink-0">
+            <Truck size={18} className="text-white" />
           </div>
+          <p className="font-bold text-lg tracking-tight leading-none">
+            <span className="text-white">Yard</span>
+            <span className="text-[#5B9BFF]">Flow</span>
+          </p>
         </div>
         <nav className="p-3 flex-1 flex flex-col gap-1">
           <button

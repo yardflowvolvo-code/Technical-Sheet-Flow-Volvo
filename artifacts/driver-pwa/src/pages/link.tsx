@@ -55,7 +55,7 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-status-called/10 blur-3xl" />
 
       <div className="w-full max-w-sm relative">
-        <div className="w-full bg-white rounded-t-2xl px-6 py-5 shadow-lg flex flex-col items-center">
+        <div className="w-full bg-[#fdfdfd] rounded-t-2xl px-6 py-5 shadow-lg flex flex-col items-center">
           <img
             src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
             alt="YardFlow"
