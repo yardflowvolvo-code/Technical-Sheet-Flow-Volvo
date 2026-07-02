@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useEffect } from "react";
 import { SignIn, useAuth } from "@clerk/react";
+import { Truck } from "lucide-react";
 import { setAuthTokenGetter, useGetMe } from "@workspace/api-client-react";
 import { canAccess, defaultRouteFor } from "@/lib/access";
 import NotFound from "@/pages/not-found";
@@ -125,15 +126,34 @@ function Router() {
 
 function SignInPage() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-6">
-        <div className="bg-[#fdfdfd] rounded-2xl px-6 py-4 shadow-lg">
-          <img
-            src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
-            alt="YardFlow"
-            className="h-20 w-auto object-contain"
-          />
+    <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden p-6">
+      {/* Ambient brand accents */}
+      <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
+
+      <div className="flex flex-col items-center gap-6 relative w-full max-w-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-[#0051EC] shrink-0">
+            <Truck size={22} className="text-white" />
+          </div>
+          <div className="leading-none notranslate" translate="no">
+            <p className="font-bold text-2xl tracking-tight text-foreground">
+              <span>Yard</span>
+              <span className="text-[#0051EC]">Flow</span>
+            </p>
+            <p className="text-muted-foreground text-[10px] uppercase tracking-widest mt-1">
+              Yard Management
+            </p>
+          </div>
         </div>
+
+        <div className="text-center">
+          <h1 className="text-lg font-semibold text-foreground">Bem-vindo(a) de volta</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Entre com sua conta para acessar o painel.
+          </p>
+        </div>
+
         <SignIn routing="hash" signUpUrl={undefined} />
       </div>
     </div>

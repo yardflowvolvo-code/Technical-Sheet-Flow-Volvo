@@ -23,18 +23,33 @@ function AuthTokenSync() {
 
 function SignInPage() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-6">
-        <div className="flex flex-col items-center gap-2">
-          <div className="bg-[#fdfdfd] rounded-2xl px-6 py-4 shadow-lg">
-            <img
-              src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
-              alt="YardFlow"
-              className="h-20 w-auto object-contain"
-            />
+    <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden p-6">
+      <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
+
+      <div className="flex flex-col items-center gap-6 relative w-full max-w-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-[#0051EC] shrink-0">
+            <Truck size={22} className="text-white" />
           </div>
-          <span className="text-xs text-primary font-mono tracking-widest uppercase font-semibold">Superadmin</span>
+          <div className="leading-none notranslate" translate="no">
+            <p className="font-bold text-2xl tracking-tight text-foreground">
+              <span>Yard</span>
+              <span className="text-[#0051EC]">Flow</span>
+            </p>
+            <span className="text-xs text-primary font-mono tracking-widest uppercase font-semibold">
+              Superadmin
+            </span>
+          </div>
         </div>
+
+        <div className="text-center">
+          <h1 className="text-lg font-semibold text-foreground">Bem-vindo(a) de volta</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Entre com sua conta para gerenciar as empresas.
+          </p>
+        </div>
+
         <SignIn routing="hash" signUpUrl={undefined} />
       </div>
     </div>
@@ -51,7 +66,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-[#0051EC] shrink-0">
             <Truck size={18} className="text-white" />
           </div>
-          <p className="font-bold text-lg tracking-tight leading-none">
+          <p className="font-bold text-lg tracking-tight leading-none notranslate" translate="no">
             <span className="text-white">Yard</span>
             <span className="text-[#5B9BFF]">Flow</span>
           </p>

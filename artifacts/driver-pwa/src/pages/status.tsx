@@ -266,7 +266,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
           <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-[#0051EC] shrink-0">
             <Truck size={18} className="text-white" />
           </div>
-          <p className="font-bold text-lg tracking-tight leading-none">
+          <p className="font-bold text-lg tracking-tight leading-none notranslate" translate="no">
             <span className="text-foreground">Yard</span>
             <span className="text-[#5B9BFF]">Flow</span>
           </p>

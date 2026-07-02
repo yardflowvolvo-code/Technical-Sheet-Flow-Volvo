@@ -89,7 +89,18 @@ export default function Mapa() {
     }).addTo(map);
     L.control.attribution({ prefix: "© OpenStreetMap" }).addTo(map);
     mapInstanceRef.current = map;
+
+    // The map container's size changes when the layout switches between
+    // the mobile (stacked) and desktop (side-by-side) breakpoints, and
+    // Leaflet doesn't detect that on its own — without this the tiles can
+    // end up misaligned after a resize or orientation change.
+    const handleResize = () => map.invalidateSize();
+    window.addEventListener("resize", handleResize);
+    const resizeTimer = setTimeout(handleResize, 200);
+
     return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(resizeTimer);
       map.remove();
       mapInstanceRef.current = null;
     };
@@ -170,14 +181,14 @@ export default function Mapa() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-6 py-4 border-b border-border flex items-center justify-between shrink-0">
+      <div className="px-4 md:px-6 py-3 md:py-4 border-b border-border flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-0 shrink-0">
         <div>
-          <h2 className="text-xl font-bold text-foreground tracking-tight">Mapa do Pátio</h2>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h2 className="text-lg md:text-xl font-bold text-foreground tracking-tight">Mapa do Pátio</h2>
+          <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
             Posições em tempo real · atualiza a cada 10 s
           </p>
         </div>
-        <div className="flex items-center gap-6 text-sm">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs md:text-sm">
           {Object.entries(STATUS_CONFIG)
             .filter(([k]) => k !== "finished")
             .map(([key, cfg]) => {
@@ -185,10 +196,10 @@ export default function Mapa() {
               return (
                 <div key={key} className="flex items-center gap-1.5">
                   <span
-                    className="inline-block w-2.5 h-2.5 rounded-full"
+                    className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
                     style={{ background: cfg.color }}
                   />
-                  <span className="text-muted-foreground">{cfg.label}</span>
+                  <span className="text-muted-foreground whitespace-nowrap">{cfg.label}</span>
                   <span className="font-bold text-foreground tabular-nums">{count}</span>
                 </div>
               );
@@ -196,10 +207,10 @@ export default function Mapa() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div ref={mapRef} className="flex-1 z-0" />
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <div ref={mapRef} className="flex-1 z-0 min-h-[45vh] md:min-h-0" />
 
-        <div className="w-72 border-l border-border bg-card overflow-y-auto shrink-0">
+        <div className="w-full md:w-72 border-t md:border-t-0 md:border-l border-border bg-card overflow-y-auto shrink-0 max-h-[35vh] md:max-h-none">
           <div className="p-4 border-b border-border">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
               Caminhões no pátio

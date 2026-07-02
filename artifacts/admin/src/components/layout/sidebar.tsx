@@ -31,7 +31,7 @@ function Brand() {
       <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-[#0051EC] shrink-0">
         <Truck size={22} className="text-white" />
       </div>
-      <div className="leading-none">
+      <div className="leading-none notranslate" translate="no">
         <p className="font-bold text-2xl tracking-tight">
           <span className="text-white">Yard</span>
           <span className="text-[#5B9BFF]">Flow</span>
@@ -156,7 +156,7 @@ export default function Sidebar() {
           <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#0051EC] shrink-0">
             <Truck size={16} className="text-white" />
           </div>
-          <p className="font-bold text-lg tracking-tight leading-none">
+          <p className="font-bold text-lg tracking-tight leading-none notranslate" translate="no">
             <span className="text-white">Yard</span>
             <span className="text-[#5B9BFF]">Flow</span>
           </p>
