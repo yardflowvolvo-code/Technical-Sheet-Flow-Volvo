@@ -27,12 +27,12 @@ const ALL_NAV_ITEMS = [
 
 function Brand() {
   return (
-    <div className="p-5 border-b border-sidebar-border flex items-center justify-center shrink-0">
-      <div className="bg-white rounded-xl px-4 py-3 shadow-sm">
+    <div className="px-4 py-5 border-b border-sidebar-border flex items-center justify-center shrink-0">
+      <div className="w-full bg-white rounded-xl px-4 py-4 shadow-sm flex items-center justify-center">
         <img
           src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
           alt="YardFlow"
-          className="h-14 w-auto object-contain"
+          className="h-24 w-auto max-w-full object-contain"
         />
       </div>
     </div>
