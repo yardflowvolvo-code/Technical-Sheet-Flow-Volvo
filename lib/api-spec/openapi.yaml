@@ -536,7 +536,10 @@ paths:
     post:
       operationId: createCompanyUser
       tags: [company-users]
-      summary: Invite a user to the company (gestor only)
+      summary: >-
+        Create a login for an internal employee (gestor only). Creates the
+        Clerk account and the company membership in one step, and returns a
+        one-time temporary password.
       requestBody:
         required: true
         content:
@@ -545,11 +548,13 @@ paths:
               $ref: "#/components/schemas/CompanyUserInput"
       responses:
         "201":
-          description: User invited
+          description: User created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CompanyUser"
+                $ref: "#/components/schemas/CompanyUserCreated"
+        "409":
+          description: A user with this email already exists
 
   /company-users/{id}:
     patch:
@@ -997,11 +1002,34 @@ components:
     CompanyUserInput:
       type: object
       required:
-        - clerkUserId
         - role
         - name
         - email
       properties:
+        role:
+          type: string
+          enum: [gestor, portaria, doca]
+        name:
+          type: string
+        email:
+          type: string
+
+    CompanyUserCreated:
+      type: object
+      required:
+        - id
+        - companyId
+        - clerkUserId
+        - role
+        - name
+        - email
+        - createdAt
+        - temporaryPassword
+      properties:
+        id:
+          type: integer
+        companyId:
+          type: integer
         clerkUserId:
           type: string
         role:
@@ -1011,6 +1039,15 @@ components:
           type: string
         email:
           type: string
+        createdAt:
+          type: string
+          format: date-time
+        temporaryPassword:
+          type: string
+          description: >-
+            Shown only once, in this response. The admin must share it with
+            the employee (e.g. via WhatsApp/email) — Yardflow never stores
+            or displays it again.
 
     CompanyUserUpdate:
       type: object

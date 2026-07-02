@@ -539,10 +539,9 @@ export const ListCompanyUsersResponse = zod.array(ListCompanyUsersResponseItem)
 
 
 /**
- * @summary Invite a user to the company (gestor only)
+ * @summary Create a login for an internal employee (gestor only). Creates the Clerk account and the company membership in one step, and returns a one-time temporary password.
  */
 export const CreateCompanyUserBody = zod.object({
-  "clerkUserId": zod.string(),
   "role": zod.enum(['gestor', 'portaria', 'doca']),
   "name": zod.string(),
   "email": zod.string()
@@ -555,7 +554,8 @@ export const CreateCompanyUserResponse = zod.object({
   "role": zod.enum(['gestor', 'portaria', 'doca']),
   "name": zod.string(),
   "email": zod.string(),
-  "createdAt": zod.coerce.date()
+  "createdAt": zod.coerce.date(),
+  "temporaryPassword": zod.string().describe('Shown only once, in this response. The admin must share it with the employee (e.g. via WhatsApp\/email) — Yardflow never stores or displays it again.')
 })
 
 

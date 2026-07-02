@@ -19,6 +19,8 @@ export * from './companyStatus';
 export * from './companyUpdate';
 export * from './companyUpdateStatus';
 export * from './companyUser';
+export * from './companyUserCreated';
+export * from './companyUserCreatedRole';
 export * from './companyUserInput';
 export * from './companyUserInputRole';
 export * from './companyUserRole';

@@ -8,7 +8,6 @@
 import type { CompanyUserInputRole } from './companyUserInputRole';
 
 export interface CompanyUserInput {
-  clerkUserId: string;
   role: CompanyUserInputRole;
   name: string;
   email: string;

@@ -11,6 +11,7 @@ import Doca from "@/pages/doca";
 import Mapa from "@/pages/mapa";
 import Relatorios from "@/pages/relatorios";
 import Configuracoes from "@/pages/configuracoes";
+import Usuarios from "@/pages/usuarios";
 import Sidebar from "@/components/layout/sidebar";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,9 @@ function Router() {
       </Route>
       <Route path="/configuracoes">
         <Layout><Configuracoes /></Layout>
+      </Route>
+      <Route path="/usuarios">
+        <Layout><Usuarios /></Layout>
       </Route>
       <Route>
         <Layout><NotFound /></Layout>

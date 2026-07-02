@@ -244,10 +244,30 @@ export const CompanyUserInputRole = {
 } as const;
 
 export interface CompanyUserInput {
-  clerkUserId: string;
   role: CompanyUserInputRole;
   name: string;
   email: string;
+}
+
+export type CompanyUserCreatedRole = typeof CompanyUserCreatedRole[keyof typeof CompanyUserCreatedRole];
+
+
+export const CompanyUserCreatedRole = {
+  gestor: 'gestor',
+  portaria: 'portaria',
+  doca: 'doca',
+} as const;
+
+export interface CompanyUserCreated {
+  id: number;
+  companyId: number;
+  clerkUserId: string;
+  role: CompanyUserCreatedRole;
+  name: string;
+  email: string;
+  createdAt: string;
+  /** Shown only once, in this response. The admin must share it with the employee (e.g. via WhatsApp/email) — Yardflow never stores or displays it again. */
+  temporaryPassword: string;
 }
 
 export type CompanyUserUpdateRole = typeof CompanyUserUpdateRole[keyof typeof CompanyUserUpdateRole];

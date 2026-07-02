@@ -28,6 +28,7 @@ import type {
   CompanyInput,
   CompanyUpdate,
   CompanyUser,
+  CompanyUserCreated,
   CompanyUserInput,
   CompanyUserUpdate,
   ConfigUpdate,
@@ -1868,11 +1869,11 @@ export const getCreateCompanyUserUrl = () => {
 }
 
 /**
- * @summary Invite a user to the company (gestor only)
+ * @summary Create a login for an internal employee (gestor only). Creates the Clerk account and the company membership in one step, and returns a one-time temporary password.
  */
-export const createCompanyUser = async (companyUserInput: CompanyUserInput, options?: RequestInit): Promise<CompanyUser> => {
+export const createCompanyUser = async (companyUserInput: CompanyUserInput, options?: RequestInit): Promise<CompanyUserCreated> => {
 
-  return customFetch<CompanyUser>(getCreateCompanyUserUrl(),
+  return customFetch<CompanyUserCreated>(getCreateCompanyUserUrl(),
   {
     ...options,
     method: 'POST',
@@ -1884,7 +1885,7 @@ export const createCompanyUser = async (companyUserInput: CompanyUserInput, opti
 
 
 
-export const getCreateCompanyUserMutationOptions = <TError = ErrorType<unknown>,
+export const getCreateCompanyUserMutationOptions = <TError = ErrorType<void>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyUser>>, TError,{data: BodyType<CompanyUserInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCompanyUser>>, TError,{data: BodyType<CompanyUserInput>}, TContext> => {
 
@@ -1913,12 +1914,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateCompanyUserMutationResult = NonNullable<Awaited<ReturnType<typeof createCompanyUser>>>
     export type CreateCompanyUserMutationBody = BodyType<CompanyUserInput>
-    export type CreateCompanyUserMutationError = ErrorType<unknown>
+    export type CreateCompanyUserMutationError = ErrorType<void>
 
     /**
- * @summary Invite a user to the company (gestor only)
+ * @summary Create a login for an internal employee (gestor only). Creates the Clerk account and the company membership in one step, and returns a one-time temporary password.
  */
-export const useCreateCompanyUser = <TError = ErrorType<unknown>,
+export const useCreateCompanyUser = <TError = ErrorType<void>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCompanyUser>>, TError,{data: BodyType<CompanyUserInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof createCompanyUser>>,
