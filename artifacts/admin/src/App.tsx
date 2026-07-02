@@ -4,7 +4,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useEffect } from "react";
 import { SignIn, useAuth } from "@clerk/react";
-import { setAuthTokenGetter } from "@workspace/api-client-react";
+import { setAuthTokenGetter, useGetMe } from "@workspace/api-client-react";
+import { canAccess, defaultRouteFor } from "@/lib/access";
 import NotFound from "@/pages/not-found";
 import Portaria from "@/pages/portaria";
 import Doca from "@/pages/doca";
@@ -22,6 +23,43 @@ function RedirectTo({ to }: { to: string }) {
     setLocation(to);
   }, [setLocation, to]);
   return null;
+}
+
+function RedirectToHome() {
+  const { data: me, isLoading } = useGetMe();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <span className="h-8 w-8 rounded-full border-2 border-primary border-r-transparent animate-spin" />
+      </div>
+    );
+  }
+  return <RedirectTo to={defaultRouteFor(me?.companyUser?.role)} />;
+}
+
+// Wrap a page with this to only render it for roles allowed by
+// lib/access.ts — anyone else is bounced to their own home page instead
+// of seeing a page whose data will just 403 anyway.
+function RoleGuard({
+  path,
+  children,
+}: {
+  path: string;
+  children: React.ReactNode;
+}) {
+  const { data: me, isLoading } = useGetMe();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <span className="h-8 w-8 rounded-full border-2 border-primary border-r-transparent animate-spin" />
+      </div>
+    );
+  }
+  const role = me?.companyUser?.role;
+  if (!canAccess(role, path)) {
+    return <RedirectTo to={defaultRouteFor(role)} />;
+  }
+  return <>{children}</>;
 }
 
 function AuthTokenSync() {
@@ -47,24 +85,36 @@ function Layout({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={() => <RedirectTo to="/portaria" />} />
+      <Route path="/" component={RedirectToHome} />
       <Route path="/portaria">
-        <Layout><Portaria /></Layout>
+        <RoleGuard path="/portaria">
+          <Layout><Portaria /></Layout>
+        </RoleGuard>
       </Route>
       <Route path="/doca">
-        <Layout><Doca /></Layout>
+        <RoleGuard path="/doca">
+          <Layout><Doca /></Layout>
+        </RoleGuard>
       </Route>
       <Route path="/mapa">
-        <Layout><Mapa /></Layout>
+        <RoleGuard path="/mapa">
+          <Layout><Mapa /></Layout>
+        </RoleGuard>
       </Route>
       <Route path="/relatorios">
-        <Layout><Relatorios /></Layout>
+        <RoleGuard path="/relatorios">
+          <Layout><Relatorios /></Layout>
+        </RoleGuard>
       </Route>
       <Route path="/configuracoes">
-        <Layout><Configuracoes /></Layout>
+        <RoleGuard path="/configuracoes">
+          <Layout><Configuracoes /></Layout>
+        </RoleGuard>
       </Route>
       <Route path="/usuarios">
-        <Layout><Usuarios /></Layout>
+        <RoleGuard path="/usuarios">
+          <Layout><Usuarios /></Layout>
+        </RoleGuard>
       </Route>
       <Route>
         <Layout><NotFound /></Layout>

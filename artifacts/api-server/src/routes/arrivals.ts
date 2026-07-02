@@ -15,6 +15,7 @@ import {
   ReportGeofenceExitParams,
 } from "@workspace/api-zod";
 import { sendPushNotification } from "../lib/vapid";
+import { requireCompany, requireRole } from "../middlewares/auth";
 
 const router = Router();
 
@@ -54,7 +55,7 @@ async function withPushFlag(arrivals: (typeof arrivalsTable.$inferSelect)[]) {
   return arrivals.map((a) => arrivalToResponse(a, subSet.has(a.id)));
 }
 
-router.get("/arrivals", async (req, res) => {
+router.get("/arrivals", requireCompany, async (req, res) => {
   const { status, active } = req.query;
   const conditions = [];
 
@@ -89,7 +90,11 @@ router.get("/arrivals", async (req, res) => {
   res.json(result);
 });
 
-router.post("/arrivals", async (req, res) => {
+router.post(
+  "/arrivals",
+  requireCompany,
+  requireRole("portaria", "gestor"),
+  async (req, res) => {
   const parsed = CreateArrivalBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -168,7 +173,11 @@ router.get("/arrivals/:id", async (req, res) => {
   res.json(result[0]);
 });
 
-router.patch("/arrivals/:id", async (req, res) => {
+router.patch(
+  "/arrivals/:id",
+  requireCompany,
+  requireRole("doca", "gestor"),
+  async (req, res) => {
   const parsedParams = UpdateArrivalParams.safeParse({ id: Number(req.params.id) });
   const parsedBody = UpdateArrivalBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
@@ -188,7 +197,11 @@ router.patch("/arrivals/:id", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/arrivals/:id/call-dock", async (req, res) => {
+router.post(
+  "/arrivals/:id/call-dock",
+  requireCompany,
+  requireRole("doca", "gestor"),
+  async (req, res) => {
   const parsedParams = CallDockParams.safeParse({ id: Number(req.params.id) });
   const parsedBody = CallDockBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
@@ -234,7 +247,11 @@ router.post("/arrivals/:id/call-dock", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/arrivals/:id/confirm-arrival-dock", async (req, res) => {
+router.post(
+  "/arrivals/:id/confirm-arrival-dock",
+  requireCompany,
+  requireRole("doca", "gestor"),
+  async (req, res) => {
   const parsed = ConfirmArrivalAtDockParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -252,7 +269,11 @@ router.post("/arrivals/:id/confirm-arrival-dock", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/arrivals/:id/checkout", async (req, res) => {
+router.post(
+  "/arrivals/:id/checkout",
+  requireCompany,
+  requireRole("doca", "gestor"),
+  async (req, res) => {
   const parsed = CheckoutArrivalParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -271,7 +292,11 @@ router.post("/arrivals/:id/checkout", async (req, res) => {
   res.json(result[0]);
 });
 
-router.post("/arrivals/:id/geofence-exit", async (req, res) => {
+router.post(
+  "/arrivals/:id/geofence-exit",
+  requireCompany,
+  requireRole("doca", "gestor"),
+  async (req, res) => {
   const parsed = ReportGeofenceExitParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });

@@ -2,8 +2,13 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { arrivalsTable } from "@workspace/db";
 import { isNull, sql } from "drizzle-orm";
+import { requireCompany, requireRole } from "../middlewares/auth";
 const router = Router();
-router.get("/stats", async (_req, res) => {
+router.get(
+  "/stats",
+  requireCompany,
+  requireRole("doca", "gestor"),
+  async (_req, res) => {
   const rows = await db
     .select()
     .from(arrivalsTable)

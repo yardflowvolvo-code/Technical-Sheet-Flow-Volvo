@@ -11,24 +11,25 @@ import {
 import { cn } from "@/lib/utils";
 import { useUser, useClerk } from "@clerk/react";
 import { useGetMe } from "@workspace/api-client-react";
+import { canAccess } from "@/lib/access";
+
+const ALL_NAV_ITEMS = [
+  { href: "/portaria", label: "Portaria", icon: ClipboardList },
+  { href: "/doca", label: "Gestão de Pátio", icon: Truck },
+  { href: "/mapa", label: "Mapa do Pátio", icon: Map },
+  { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
+  { href: "/usuarios", label: "Usuários", icon: UserCog },
+  { href: "/configuracoes", label: "Configurações", icon: Settings },
+];
 
 export default function Sidebar() {
   const [location] = useLocation();
   const { user } = useUser();
   const { signOut } = useClerk();
   const { data: me } = useGetMe();
-  const isGestor = me?.companyUser?.role === "gestor";
+  const role = me?.companyUser?.role;
 
-  const navItems = [
-    { href: "/portaria", label: "Portaria", icon: ClipboardList },
-    { href: "/doca", label: "Gestão de Pátio", icon: Truck },
-    { href: "/mapa", label: "Mapa do Pátio", icon: Map },
-    { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
-    ...(isGestor
-      ? [{ href: "/usuarios", label: "Usuários", icon: UserCog }]
-      : []),
-    { href: "/configuracoes", label: "Configurações", icon: Settings },
-  ];
+  const navItems = ALL_NAV_ITEMS.filter((item) => canAccess(role, item.href));
 
   const initials = user?.firstName
     ? user.firstName.charAt(0) + (user.lastName?.charAt(0) ?? "")

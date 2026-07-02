@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import { configTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { UpdateConfigBody } from "@workspace/api-zod";
+import { requireCompany, requireRole } from "../middlewares/auth";
 const router = Router();
 async function ensureConfig() {
   const [existing] = await db.select().from(configTable).limit(1);
@@ -10,7 +11,7 @@ async function ensureConfig() {
   const [created] = await db.insert(configTable).values({}).returning();
   return created!;
 }
-router.get("/config", async (_req, res) => {
+router.get("/config", requireCompany, async (_req, res) => {
   const config = await ensureConfig();
   res.json({
     geofenceLat: config.geofenceLat,
@@ -19,7 +20,11 @@ router.get("/config", async (_req, res) => {
     locationIntervalSeconds: config.locationIntervalSeconds,
   });
 });
-router.patch("/config", async (req, res) => {
+router.patch(
+  "/config",
+  requireCompany,
+  requireRole("gestor"),
+  async (req, res) => {
   const parsed = UpdateConfigBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });

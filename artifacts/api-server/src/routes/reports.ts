@@ -3,8 +3,13 @@ import { db } from "@workspace/db";
 import { arrivalsTable } from "@workspace/db";
 import { and, gte, lte, sql } from "drizzle-orm";
 import { GetReportsQueryParams } from "@workspace/api-zod";
+import { requireCompany, requireRole } from "../middlewares/auth";
 const router = Router();
-router.get("/reports", async (req, res) => {
+router.get(
+  "/reports",
+  requireCompany,
+  requireRole("gestor"),
+  async (req, res) => {
   const parsed = GetReportsQueryParams.safeParse({
     from: req.query.from,
     to: req.query.to,
