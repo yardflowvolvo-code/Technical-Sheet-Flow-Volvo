@@ -341,11 +341,12 @@ export default function Doca() {
             ) : (
               <Card className="border-border bg-card overflow-hidden">
                 <div className="overflow-x-auto touch-pan-x">
-                  <table className="w-full min-w-[620px] text-sm">
+                  <table className="w-full min-w-[700px] text-sm">
                     <thead className="bg-secondary/50">
                       <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                         <th className="px-4 py-2.5 font-semibold">Placa</th>
                         <th className="px-4 py-2.5 font-semibold">Motorista</th>
+                        <th className="px-4 py-2.5 font-semibold">NF</th>
                         <th className="px-4 py-2.5 font-semibold">Entrada</th>
                         <th className="px-4 py-2.5 font-semibold">Saída</th>
                         <th className="px-4 py-2.5 font-semibold">Tempo no Pátio</th>
@@ -361,6 +362,9 @@ export default function Doca() {
                           <tr key={a.id} className="border-t border-border">
                             <td className="px-4 py-2.5 font-mono font-bold">{a.plate}</td>
                             <td className="px-4 py-2.5">{a.driverName}</td>
+                            <td className="px-4 py-2.5 font-mono text-muted-foreground">
+                              {a.invoiceNumber || "-"}
+                            </td>
                             <td className="px-4 py-2.5 font-mono">
                               {format(new Date(a.createdAt), "HH:mm", { locale: ptBR })}
                             </td>
