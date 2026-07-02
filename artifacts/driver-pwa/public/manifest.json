@@ -5,8 +5,8 @@
   "start_url": "/driver/",
   "scope": "/driver/",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#f59e0b",
+  "background_color": "#0d1526",
+  "theme_color": "#0d1526",
   "orientation": "portrait",
   "icons": [
     {

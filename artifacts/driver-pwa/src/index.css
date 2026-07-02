@@ -56,6 +56,12 @@
   --color-sidebar-accent-border: var(--sidebar-accent-border);
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
+  --color-status-waiting: hsl(var(--status-waiting));
+  --color-status-in-yard: hsl(var(--status-in-yard));
+  --color-status-called: hsl(var(--status-called));
+  --color-status-alert: hsl(var(--status-alert));
+  --color-status-finished: hsl(var(--status-finished));
+
   --font-sans: var(--app-font-sans);
   --font-serif: var(--app-font-serif);
   --font-mono: var(--app-font-mono);
@@ -93,208 +99,137 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* LIGHT MODE */
+/* YARDFLOW DRIVER — single dark theme.
+   Built for outdoor phone use at a truck yard: high contrast, near-black
+   surfaces (easier on the eyes and the battery), a Volvo-blue primary, and
+   dedicated status colors so a driver can recognize their state at a
+   glance without needing to read the label. */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(255,255,255, .12);
+  --badge-outline: rgba(255,255,255, .08);
 
-  /* Automatic computation of border around primary / danger buttons */
-  --opaque-button-border-intensity: -8; /* In terms of percentages */
+  --opaque-button-border-intensity: 9;
 
-  /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
 
-  --background: 213 22% 92%;
+  --background: 222 45% 7%;
+  --foreground: 210 25% 96%;
+  --border: 222 24% 19%;
 
-  --foreground: 222 47% 12%;
+  --card: 222 38% 11%;
+  --card-foreground: 210 25% 96%;
+  --card-border: 222 24% 19%;
 
-  --border: 213 20% 84%;
+  --sidebar: 222 45% 7%;
+  --sidebar-foreground: 210 20% 88%;
+  --sidebar-border: 222 24% 19%;
+  --sidebar-primary: 217 91% 60%;
+  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-accent: 222 30% 16%;
+  --sidebar-accent-foreground: 210 20% 92%;
+  --sidebar-ring: 217 91% 60%;
 
-  --card: 0 0% 100%;
+  --popover: 222 38% 11%;
+  --popover-foreground: 210 25% 96%;
+  --popover-border: 222 24% 19%;
 
-  --card-foreground: 222 47% 12%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 40% 98%;
 
-  --card-border: 213 20% 84%;
+  --secondary: 222 30% 16%;
+  --secondary-foreground: 210 20% 92%;
 
-  --sidebar: 222 47% 15%;
+  --muted: 222 26% 14%;
+  --muted-foreground: 215 15% 62%;
 
-  --sidebar-foreground: 213 20% 82%;
+  --accent: 217 91% 60%;
+  --accent-foreground: 210 40% 98%;
 
-  --sidebar-border: 222 40% 20%;
-
-  --sidebar-primary: 217 91% 54%;
-
-  --sidebar-primary-foreground: 0 0% 98%;
-
-  --sidebar-accent: 222 40% 22%;
-
-  --sidebar-accent-foreground: 0 0% 90%;
-
-  --sidebar-ring: 217 91% 54%;
-
-  --popover: 0 0% 100%;
-
-  --popover-foreground: 222 47% 12%;
-
-  --popover-border: 213 20% 84%;
-
-  --primary: 217 91% 54%;
-
-  --primary-foreground: 0 0% 98%;
-
-  --secondary: 213 18% 88%;
-
-  --secondary-foreground: 222 40% 20%;
-
-  --muted: 213 15% 87%;
-
-  --muted-foreground: 217 12% 48%;
-
-  --accent: 217 91% 54%;
-
-  --accent-foreground: 0 0% 98%;
-
-  --destructive: 0 84% 60%;
-
+  --destructive: 0 84% 62%;
   --destructive-foreground: 0 0% 98%;
 
-  --input: 213 20% 88%;
-  --ring: 217 91% 54%;
-  --chart-1: 217 91% 54%;
+  --input: 222 24% 19%;
+  --ring: 217 91% 60%;
+  --chart-1: 217 91% 60%;
   --chart-2: 142 71% 45%;
-  --chart-3: 38 92% 50%;
-  --chart-4: 0 84% 60%;
-  --chart-5: 271 91% 65%;
+  --chart-3: 38 92% 55%;
+  --chart-4: 0 84% 62%;
+  --chart-5: 271 91% 68%;
+
+  /* Dedicated status colors — one per arrival state, used consistently
+     across the whole app instead of ad-hoc Tailwind swatches. */
+  --status-waiting: 38 92% 55%;
+  --status-in-yard: 142 71% 48%;
+  --status-called: 217 91% 64%;
+  --status-alert: 0 84% 62%;
+  --status-finished: 215 15% 58%;
 
   --app-font-sans: 'Inter', sans-serif;
   --app-font-serif: Georgia, serif;
   --app-font-mono: Menlo, monospace;
-  --radius: .5rem; /* 8px */
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00); /*replace with H S L */
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00); /*replace with H S L */
-  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
+  --radius: .75rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(222 45% 3% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(222 45% 3% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(222 45% 3% / 0.00), 0px 1px 2px -1px hsl(222 45% 3% / 0.00);
+  --shadow: 0px 4px 12px -2px hsl(222 45% 3% / 0.35), 0px 1px 2px -1px hsl(222 45% 3% / 0.20);
+  --shadow-md: 0px 6px 16px -2px hsl(222 45% 3% / 0.4), 0px 2px 4px -1px hsl(222 45% 3% / 0.2);
+  --shadow-lg: 0px 10px 24px -4px hsl(222 45% 3% / 0.45), 0px 4px 6px -1px hsl(222 45% 3% / 0.2);
+  --shadow-xl: 0px 16px 32px -4px hsl(222 45% 3% / 0.5), 0px 8px 10px -1px hsl(222 45% 3% / 0.2);
+  --shadow-2xl: 0px 20px 40px -4px hsl(222 45% 3% / 0.55);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
-  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
-
-  /* Fallback for older browsers */
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 
-  /* Fallback for older browsers */
   --sidebar-accent-border: hsl(var(--sidebar-accent));
   --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 
-  /* Fallback for older browsers */
   --primary-border: hsl(var(--primary));
   --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 
-  /* Fallback for older browsers */
   --secondary-border: hsl(var(--secondary));
   --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 
-  /* Fallback for older browsers */
   --muted-border: hsl(var(--muted));
   --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 
-  /* Fallback for older browsers */
   --accent-border: hsl(var(--accent));
   --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 
-  /* Fallback for older browsers */
   --destructive-border: hsl(var(--destructive));
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
+/* Kept identical to :root — this app intentionally has a single theme
+   (no light mode), but some shared UI primitives check for a .dark
+   ancestor, so we mirror the tokens here rather than leaving stale
+   light-mode values that would silently override :root. */
 .dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
-
-  --opaque-button-border-intensity: 9;  /* In terms of percentages */
-
-  /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
-
-  --background: 213 22% 92%;
-
-  --foreground: 222 47% 12%;
-
-  --border: 213 20% 84%;
-
-  --card: 0 0% 100%;
-
-  --card-foreground: 222 47% 12%;
-
-  --card-border: 213 20% 84%;
-
-  --sidebar: 222 47% 15%;
-
-  --sidebar-foreground: 213 20% 82%;
-
-  --sidebar-border: 222 40% 20%;
-
-  --sidebar-primary: 217 91% 54%;
-
-  --sidebar-primary-foreground: 0 0% 98%;
-
-  --sidebar-accent: 222 40% 22%;
-
-  --sidebar-accent-foreground: 0 0% 90%;
-
-  --sidebar-ring: 217 91% 54%;
-
-  --popover: 0 0% 100%;
-
-  --popover-foreground: 222 47% 12%;
-
-  --popover-border: 213 20% 84%;
-
-  --primary: 217 91% 54%;
-
-  --primary-foreground: 0 0% 98%;
-
-  --secondary: 213 18% 88%;
-
-  --secondary-foreground: 222 40% 20%;
-
-  --muted: 213 15% 87%;
-
-  --muted-foreground: 217 12% 48%;
-
-  --accent: 217 91% 54%;
-
-  --accent-foreground: 0 0% 98%;
-
-  --destructive: 0 84% 60%;
-
+  --button-outline: var(--button-outline);
+  --badge-outline: var(--badge-outline);
+  --background: 222 45% 7%;
+  --foreground: 210 25% 96%;
+  --border: 222 24% 19%;
+  --card: 222 38% 11%;
+  --card-foreground: 210 25% 96%;
+  --card-border: 222 24% 19%;
+  --popover: 222 38% 11%;
+  --popover-foreground: 210 25% 96%;
+  --popover-border: 222 24% 19%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 222 30% 16%;
+  --secondary-foreground: 210 20% 92%;
+  --muted: 222 26% 14%;
+  --muted-foreground: 215 15% 62%;
+  --accent: 217 91% 60%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 62%;
   --destructive-foreground: 0 0% 98%;
-
-  /* Used as the border around inputs. Dark mode: Should be a border that is light enough to have high contrast when rendered on a --card background. More contrast than standard --border */
-  --input: 213 20% 88%;
-  --ring: 217 91% 54%;
-  --chart-1: 217 91% 54%;
-  --chart-2: 142 71% 45%;
-  --chart-3: 38 92% 50%;
-  --chart-4: 0 84% 60%;
-  --chart-5: 271 91% 65%;
-
-  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-sm: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-lg: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00), 0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0.00);
-  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0.00);
-
+  --input: 222 24% 19%;
+  --ring: 217 91% 60%;
 }
 
 @layer base {
