@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import {
   useGetArrival,
@@ -16,9 +16,11 @@ import {
   AlertTriangle,
   CheckCircle2,
   Bell,
+  BellOff,
   Navigation,
 } from "lucide-react";
 import { registerServiceWorker, subscribePush, watchGeolocation } from "@/lib/pwa";
+import { startAlarm, stopAlarm, unlockAudio } from "@/lib/alarm";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n, type TranslationKey } from "@/lib/i18n";
@@ -114,6 +116,41 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   const updateLocation = useUpdateLocation();
   const subscribePushMutation = useSubscribePush();
 
+  // Tracks which specific "called" event the driver has already acknowledged
+  // (silenced), keyed by calledAt — so a NEW call always rings again, but
+  // re-fetching the same call every 8s doesn't restart the alarm the driver
+  // already stopped.
+  const [acknowledgedCallKey, setAcknowledgedCallKey] = useState<string | null>(null);
+
+  const isAlerting =
+    arrival?.status === "called" && arrival.calledAt !== acknowledgedCallKey;
+
+  function handleAcknowledge() {
+    stopAlarm();
+    if (arrival?.calledAt) setAcknowledgedCallKey(arrival.calledAt);
+  }
+
+  useEffect(() => {
+    if (isAlerting) {
+      startAlarm();
+    } else {
+      stopAlarm();
+    }
+    return () => stopAlarm();
+  }, [isAlerting]);
+
+  // If the driver taps the OS push notification while the app is open in
+  // another tab/background, the service worker tells us to stop ringing.
+  useEffect(() => {
+    function onMessage(event: MessageEvent) {
+      if (event.data?.type === "yardflow:ack") {
+        handleAcknowledge();
+      }
+    }
+    navigator.serviceWorker?.addEventListener("message", onMessage);
+    return () => navigator.serviceWorker?.removeEventListener("message", onMessage);
+  }, [arrival?.calledAt]);
+
   useEffect(() => {
     registerServiceWorker().then((reg) => {
       if (reg) swRegRef.current = reg;
@@ -140,6 +177,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   }, [arrivalId]);
 
   async function handleEnablePush() {
+    unlockAudio();
     if (!swRegRef.current || !vapidKeyData?.publicKey) {
       toast({
         title: t("notificationsUnavailableTitle"),
@@ -190,6 +228,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   }
 
   function handleUnlink() {
+    stopAlarm();
     stopGeoRef.current?.();
     localStorage.removeItem("yardflow_arrival_id");
     onUnlink();
@@ -259,9 +298,13 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
 
       {/* Called to Dock — the signature moment of this app */}
       {arrival.status === "called" && arrival.dockNumber && (
-        <div
+        <button
+          type="button"
           data-testid="dock-number-display"
-          className={`relative rounded-2xl p-6 text-center mb-4 overflow-hidden shadow-xl ${meta.solidBg}`}
+          onClick={handleAcknowledge}
+          className={`relative w-full rounded-2xl p-6 text-center mb-4 overflow-hidden shadow-xl ${meta.solidBg} ${
+            isAlerting ? "animate-pulse" : ""
+          }`}
         >
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top,white,transparent_60%)]" />
           <Navigation size={20} className="relative mx-auto mb-1 text-primary-foreground/90" />
@@ -271,7 +314,13 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
           <p className="relative text-primary-foreground font-black text-6xl leading-none tabular-nums">
             {arrival.dockNumber}
           </p>
-        </div>
+          {isAlerting && (
+            <p className="relative text-primary-foreground/90 text-xs font-semibold mt-3 flex items-center justify-center gap-1.5">
+              <BellOff size={13} />
+              {t("tapToSilence")}
+            </p>
+          )}
+        </button>
       )}
 
       {/* Truck Info */}

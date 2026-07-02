@@ -48,9 +48,16 @@ self.addEventListener("push", (event) => {
       body: data.body,
       icon: "/driver/icon-192.png",
       badge: "/driver/icon-192.png",
-      vibrate: [200, 100, 200],
+      // Long, repeating pattern — the notification also stays on screen
+      // (requireInteraction) until the driver dismisses or taps it.
+      vibrate: [400, 150, 400, 150, 400, 150, 400],
       data: data,
       requireInteraction: true,
+      // Same tag + renotify: if a second call comes in before the first
+      // is acknowledged, it re-alerts (sound/vibration again) instead of
+      // silently replacing the old one.
+      tag: "yardflow-dock-call",
+      renotify: true,
     })
   );
 });
@@ -59,6 +66,8 @@ self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   event.waitUntil(
     self.clients.matchAll({ type: "window" }).then((clients) => {
+      // Tell any open tab to stop its in-app alarm sound.
+      clients.forEach((client) => client.postMessage({ type: "yardflow:ack" }));
       if (clients.length > 0) {
         clients[0].focus();
       } else {

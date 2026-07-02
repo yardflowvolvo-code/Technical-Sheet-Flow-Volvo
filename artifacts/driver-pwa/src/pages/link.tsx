@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useI18n } from "@/lib/i18n";
+import { unlockAudio } from "@/lib/alarm";
 
 interface LinkPageProps {
   onLinked: (arrivalId: number) => void;
@@ -23,6 +24,7 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    unlockAudio();
     if (!plate && !invoice) {
       toast({ title: t("missingFields"), variant: "destructive" });
       return;
