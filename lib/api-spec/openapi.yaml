@@ -721,6 +721,7 @@ components:
       required:
         - plate
         - driverName
+        - invoiceNumber
       properties:
         plate:
           type: string
@@ -730,6 +731,7 @@ components:
           minLength: 1
         invoiceNumber:
           type: string
+          minLength: 1
 
     ArrivalUpdate:
       type: object

@@ -54,10 +54,11 @@ export const ListArrivalsResponse = zod.array(ListArrivalsResponseItem)
 
 
 
+
 export const CreateArrivalBody = zod.object({
   "plate": zod.string().min(1),
   "driverName": zod.string().min(1),
-  "invoiceNumber": zod.string().optional()
+  "invoiceNumber": zod.string().min(1)
 })
 
 export const CreateArrivalResponse = zod.object({

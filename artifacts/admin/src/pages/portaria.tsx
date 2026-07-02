@@ -25,7 +25,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 const arrivalSchema = z.object({
   plate: z.string().min(7, "Placa deve ter no mínimo 7 caracteres").max(8, "Placa muito longa"),
   driverName: z.string().min(3, "Nome do motorista é obrigatório"),
-  invoiceNumber: z.string().optional(),
+  invoiceNumber: z.string().min(1, "Número da nota fiscal é obrigatório"),
 });
 
 type ArrivalFormValues = z.infer<typeof arrivalSchema>;
@@ -140,7 +140,7 @@ export default function Portaria() {
                       name="invoiceNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nota Fiscal (Opcional)</FormLabel>
+                          <FormLabel>Nota Fiscal</FormLabel>
                           <FormControl>
                             <Input placeholder="Número da NF ou pedido" {...field} />
                           </FormControl>

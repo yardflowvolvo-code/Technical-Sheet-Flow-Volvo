@@ -11,5 +11,6 @@ export interface ArrivalInput {
   plate: string;
   /** @minLength 1 */
   driverName: string;
-  invoiceNumber?: string;
+  /** @minLength 1 */
+  invoiceNumber: string;
 }
