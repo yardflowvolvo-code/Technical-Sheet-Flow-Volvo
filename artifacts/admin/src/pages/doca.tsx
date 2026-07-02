@@ -341,8 +341,8 @@ export default function Doca() {
               </div>
             ) : (
               <Card className="border-border bg-card overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                <div className="overflow-x-auto touch-pan-x">
+                  <table className="w-full min-w-[620px] text-sm">
                     <thead className="bg-secondary/50">
                       <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
                         <th className="px-4 py-2.5 font-semibold">Placa</th>
