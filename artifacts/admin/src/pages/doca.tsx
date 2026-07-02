@@ -340,7 +340,7 @@ export default function Doca() {
               </div>
             ) : (
               <Card className="border-border bg-card overflow-hidden">
-                <div className="overflow-x-auto touch-pan-x">
+                <div className="overflow-x-auto">
                   <table className="w-full min-w-[700px] text-sm">
                     <thead className="bg-secondary/50">
                       <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
