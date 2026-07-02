@@ -5,7 +5,8 @@ import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { QrCode, Truck, Plus, Clock, FileText, User } from "lucide-react";
+import { Truck, Plus, Clock, FileText, User } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { 
   useCreateArrival, 
@@ -230,7 +231,12 @@ export default function Portaria() {
               </CardHeader>
               <CardContent className="flex flex-col items-center justify-center flex-1 space-y-6">
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-border">
-                  <QrCode className="w-48 h-48 text-black" />
+                  <QRCodeSVG
+                    value={driverUrl}
+                    size={192}
+                    level="M"
+                    marginSize={0}
+                  />
                 </div>
                 
                 <div className="text-center space-y-2 w-full">
