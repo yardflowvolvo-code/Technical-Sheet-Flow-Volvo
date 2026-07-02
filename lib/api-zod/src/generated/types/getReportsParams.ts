@@ -7,8 +7,8 @@
  */
 
 export type GetReportsParams = {
-from?: Date;
-to?: Date;
+from?: string;
+to?: string;
 page?: number;
 limit?: number;
 };

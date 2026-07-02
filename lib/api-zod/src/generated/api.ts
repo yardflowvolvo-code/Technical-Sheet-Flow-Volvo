@@ -351,8 +351,8 @@ export const getReportsQueryPageDefault = 1;
 export const getReportsQueryLimitDefault = 50;
 
 export const GetReportsQueryParams = zod.object({
-  "from": zod.date().optional(),
-  "to": zod.date().optional(),
+  "from": zod.coerce.string().optional(),
+  "to": zod.coerce.string().optional(),
   "page": zod.coerce.number().default(getReportsQueryPageDefault),
   "limit": zod.coerce.number().default(getReportsQueryLimitDefault)
 })
