@@ -9,6 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
+const STATUS_LABELS: Record<string, string> = {
+  waiting: "Aguardando",
+  in_yard: "No Pátio",
+  called: "Chamado",
+  possible_exit: "Saída Irregular",
+  finished: "Finalizado",
+};
+
 export default function Relatorios() {
   const [dateFrom, setDateFrom] = useState(format(subDays(new Date(), 7), "yyyy-MM-dd"));
   const [dateTo, setDateTo] = useState(format(new Date(), "yyyy-MM-dd"));
@@ -147,7 +155,7 @@ export default function Relatorios() {
                         <Badge variant="outline" className={
                           row.status === 'finished' ? 'border-border text-muted-foreground' : 'border-primary text-primary'
                         }>
-                          {row.status === 'finished' ? 'Finalizado' : row.status}
+                          {STATUS_LABELS[row.status] ?? row.status}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm whitespace-nowrap">
