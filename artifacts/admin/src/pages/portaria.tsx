@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const arrivalSchema = z.object({
   plate: z.string().min(7, "Placa deve ter no mínimo 7 caracteres").max(8, "Placa muito longa"),
@@ -181,7 +180,7 @@ export default function Portaria() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ScrollArea className="h-[250px] pr-4">
+                <div className="h-[250px] pr-4 overflow-y-auto overscroll-contain">
                   {loadingArrivals ? (
                     <div className="flex justify-center items-center h-32">
                       <span className="h-6 w-6 rounded-full border-2 border-primary border-r-transparent animate-spin" />
@@ -215,7 +214,7 @@ export default function Portaria() {
                       ))}
                     </div>
                   )}
-                </ScrollArea>
+                </div>
               </CardContent>
             </Card>
           </div>

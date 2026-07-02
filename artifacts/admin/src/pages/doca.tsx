@@ -38,7 +38,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Arrival } from "@workspace/api-client-react";
 
 export default function Doca() {
@@ -182,7 +181,7 @@ export default function Doca() {
 
       {/* Active Arrivals List + Finished Today */}
       <div className="flex-1 overflow-hidden flex flex-col">
-        <ScrollArea className="flex-1">
+        <div className="flex-1 overflow-y-auto overscroll-contain">
           <div className="p-4 sm:p-6 flex flex-col gap-4">
             <h2 className="text-lg font-bold flex items-center gap-2 uppercase tracking-wide text-muted-foreground">
               <Truck size={18} />
@@ -380,7 +379,7 @@ export default function Doca() {
               </Card>
             )}
           </div>
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );
