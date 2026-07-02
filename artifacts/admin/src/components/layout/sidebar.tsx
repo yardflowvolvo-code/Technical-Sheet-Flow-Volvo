@@ -27,13 +27,18 @@ const ALL_NAV_ITEMS = [
 
 function Brand() {
   return (
-    <div className="px-4 py-5 border-b border-sidebar-border flex items-center justify-center shrink-0">
-      <div className="w-full bg-white rounded-xl px-4 py-4 shadow-sm flex items-center justify-center">
-        <img
-          src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
-          alt="YardFlow"
-          className="h-24 w-auto max-w-full object-contain"
-        />
+    <div className="px-5 py-6 border-b border-sidebar-border flex items-center gap-3 shrink-0">
+      <div className="flex items-center justify-center h-11 w-11 rounded-xl bg-[#0051EC] shrink-0">
+        <Truck size={22} className="text-white" />
+      </div>
+      <div className="leading-none">
+        <p className="font-bold text-2xl tracking-tight">
+          <span className="text-white">Yard</span>
+          <span className="text-[#5B9BFF]">Flow</span>
+        </p>
+        <p className="text-sidebar-foreground/50 text-[10px] uppercase tracking-widest mt-1">
+          Yard Management
+        </p>
       </div>
     </div>
   );
@@ -147,12 +152,14 @@ export default function Sidebar() {
         >
           <Menu size={22} />
         </button>
-        <div className="bg-white rounded-lg px-2.5 py-1.5">
-          <img
-            src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
-            alt="YardFlow"
-            className="h-8 w-auto object-contain"
-          />
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#0051EC] shrink-0">
+            <Truck size={16} className="text-white" />
+          </div>
+          <p className="font-bold text-lg tracking-tight leading-none">
+            <span className="text-white">Yard</span>
+            <span className="text-[#5B9BFF]">Flow</span>
+          </p>
         </div>
         <div className="w-9" aria-hidden />
       </div>

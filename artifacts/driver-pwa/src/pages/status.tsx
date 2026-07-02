@@ -18,6 +18,7 @@ import {
   Bell,
   BellOff,
   Navigation,
+  Truck,
 } from "lucide-react";
 import { registerServiceWorker, subscribePush, watchGeolocation } from "@/lib/pwa";
 import { startAlarm, stopAlarm, unlockAudio } from "@/lib/alarm";
@@ -261,12 +262,14 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
     <div className="min-h-screen bg-background flex flex-col p-5 max-w-sm mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-5 pt-1">
-        <div className="bg-white rounded-xl px-3 py-2 shadow-md">
-          <img
-            src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
-            alt="YardFlow"
-            className="h-9 w-auto object-contain"
-          />
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-[#0051EC] shrink-0">
+            <Truck size={18} className="text-white" />
+          </div>
+          <p className="font-bold text-lg tracking-tight leading-none">
+            <span className="text-foreground">Yard</span>
+            <span className="text-[#5B9BFF]">Flow</span>
+          </p>
         </div>
         <button
           data-testid="button-unlink"
