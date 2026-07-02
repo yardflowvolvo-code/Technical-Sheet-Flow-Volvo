@@ -55,13 +55,13 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
       <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-status-called/10 blur-3xl" />
 
       <div className="w-full max-w-sm relative">
-        <div className="w-full bg-[#fdfdfd] rounded-t-2xl px-6 py-9 shadow-lg flex flex-col items-center">
+        <div className="w-full bg-[#fdfdfd] rounded-t-2xl px-6 py-4 shadow-lg flex flex-col items-center">
           <img
             src={`${import.meta.env.BASE_URL}yardflow-logo.png`}
             alt="YardFlow"
-            className="h-24 w-auto object-contain"
+            className="h-20 w-auto object-contain"
           />
-          <p className="text-slate-500 text-xs font-semibold tracking-wide uppercase mt-3">
+          <p className="text-slate-500 text-xs font-semibold tracking-wide uppercase mt-1">
             {t("appSubtitle")}
           </p>
         </div>
