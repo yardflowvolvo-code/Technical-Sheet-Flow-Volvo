@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import express, { type Express } from "express";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import pinoHttp from "pino-http";
 import { clerkMiddleware } from "@clerk/express";
 import router from "./routes";
@@ -28,6 +29,11 @@ initVapid();
 
 const app: Express = express();
 
+// Render sits behind a reverse proxy — without this, express-rate-limit
+// (and anything else relying on req.ip) sees every request as coming from
+// the same proxy IP.
+app.set("trust proxy", 1);
+
 // Clerk proxy — must come before express.json()
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 
@@ -50,9 +56,55 @@ app.use(
     },
   }),
 );
-app.use(cors());
+// Everything the browser needs (admin/driver/superadmin) is served from
+// this same origin, so CORS isn't needed for the app itself — same-origin
+// requests are never subject to CORS in the first place. This just closes
+// the door on other websites making cross-origin browser requests to the
+// API. Requests with no Origin header (server-to-server calls, webhooks,
+// health checks) are always allowed, since CORS is a browser-only concept.
+const allowedOrigins = [process.env["PUBLIC_APP_URL"], process.env["RENDER_EXTERNAL_URL"]]
+  .filter((url): url is string => !!url)
+  .map((url) => url.replace(/\/$/, ""));
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// General limit for the whole API — generous, since dashboards poll
+// several endpoints every 8-30s across multiple open tabs.
+app.use(
+  "/api",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 600,
+    standardHeaders: true,
+    legacyHeaders: false,
+  }),
+);
+
+// Tighter limit specifically for the driver's unauthenticated "link by
+// plate/invoice" endpoint — the one most exposed to guessing/brute-force
+// attempts, since it has no login in front of it by design.
+app.use(
+  "/api/arrivals/link",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Muitas tentativas. Tente novamente em alguns minutos." },
+  }),
+);
 
 // Clerk auth middleware — validates session tokens
 app.use(clerkMiddleware());

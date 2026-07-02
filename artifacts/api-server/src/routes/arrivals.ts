@@ -57,7 +57,7 @@ async function withPushFlag(arrivals: (typeof arrivalsTable.$inferSelect)[]) {
 
 router.get("/arrivals", requireCompany, async (req, res) => {
   const { status, active } = req.query;
-  const conditions = [];
+  const conditions = [eq(arrivalsTable.companyId, req.companyId!)];
 
   if (status && typeof status === "string") {
     conditions.push(
@@ -74,17 +74,11 @@ router.get("/arrivals", requireCompany, async (req, res) => {
     conditions.push(sql`${arrivalsTable.finishedAt} IS NOT NULL`);
   }
 
-  const rows =
-    conditions.length > 0
-      ? await db
-          .select()
-          .from(arrivalsTable)
-          .where(and(...conditions))
-          .orderBy(sql`${arrivalsTable.createdAt} DESC`)
-      : await db
-          .select()
-          .from(arrivalsTable)
-          .orderBy(sql`${arrivalsTable.createdAt} DESC`);
+  const rows = await db
+    .select()
+    .from(arrivalsTable)
+    .where(and(...conditions))
+    .orderBy(sql`${arrivalsTable.createdAt} DESC`);
 
   const result = await withPushFlag(rows);
   res.json(result);
@@ -103,7 +97,13 @@ router.post(
   const { plate, driverName, invoiceNumber } = parsed.data;
   const [arrival] = await db
     .insert(arrivalsTable)
-    .values({ plate: plate.toUpperCase(), driverName, invoiceNumber, status: "waiting" })
+    .values({
+      plate: plate.toUpperCase(),
+      driverName,
+      invoiceNumber,
+      status: "waiting",
+      companyId: req.companyId!,
+    })
     .returning();
   res.status(201).json(arrivalToResponse(arrival!, false));
 });
@@ -187,7 +187,12 @@ router.patch(
   const [arrival] = await db
     .update(arrivalsTable)
     .set(parsedBody.data)
-    .where(eq(arrivalsTable.id, parsedParams.data.id))
+    .where(
+      and(
+        eq(arrivalsTable.id, parsedParams.data.id),
+        eq(arrivalsTable.companyId, req.companyId!)
+      )
+    )
     .returning();
   if (!arrival) {
     res.status(404).json({ error: "Not found" });
@@ -214,7 +219,12 @@ router.post(
   const [arrival] = await db
     .update(arrivalsTable)
     .set({ status: "called", dockNumber, calledAt: new Date() })
-    .where(eq(arrivalsTable.id, id))
+    .where(
+      and(
+        eq(arrivalsTable.id, id),
+        eq(arrivalsTable.companyId, req.companyId!)
+      )
+    )
     .returning();
   if (!arrival) {
     res.status(404).json({ error: "Not found" });
@@ -260,7 +270,12 @@ router.post(
   const [arrival] = await db
     .select()
     .from(arrivalsTable)
-    .where(eq(arrivalsTable.id, parsed.data.id));
+    .where(
+      and(
+        eq(arrivalsTable.id, parsed.data.id),
+        eq(arrivalsTable.companyId, req.companyId!)
+      )
+    );
   if (!arrival) {
     res.status(404).json({ error: "Not found" });
     return;
@@ -282,7 +297,12 @@ router.post(
   const [arrival] = await db
     .update(arrivalsTable)
     .set({ status: "finished", finishedAt: new Date() })
-    .where(eq(arrivalsTable.id, parsed.data.id))
+    .where(
+      and(
+        eq(arrivalsTable.id, parsed.data.id),
+        eq(arrivalsTable.companyId, req.companyId!)
+      )
+    )
     .returning();
   if (!arrival) {
     res.status(404).json({ error: "Not found" });
@@ -308,6 +328,7 @@ router.post(
     .where(
       and(
         eq(arrivalsTable.id, parsed.data.id),
+        eq(arrivalsTable.companyId, req.companyId!),
         isNull(arrivalsTable.finishedAt)
       )
     )

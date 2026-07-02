@@ -22,8 +22,14 @@ router.post("/arrivals/:id/location", async (req, res) => {
     res.status(404).json({ error: "Not found" });
     return;
   }
-  // Fetch geofence config
-  const [config] = await db.select().from(configTable).limit(1);
+  // Fetch geofence config for this arrival's own company
+  const [config] = arrival.companyId
+    ? await db
+        .select()
+        .from(configTable)
+        .where(eq(configTable.companyId, arrival.companyId))
+        .limit(1)
+    : [];
   const centerLat = config?.geofenceLat ?? -25.453996734949122;
   const centerLng = config?.geofenceLng ?? -49.362939914073124;
   const radius = config?.geofenceRadiusMeters ?? 1200;

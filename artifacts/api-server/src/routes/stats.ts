@@ -1,18 +1,23 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { arrivalsTable } from "@workspace/db";
-import { isNull, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { requireCompany, requireRole } from "../middlewares/auth";
 const router = Router();
 router.get(
   "/stats",
   requireCompany,
   requireRole("doca", "gestor"),
-  async (_req, res) => {
+  async (req, res) => {
   const rows = await db
     .select()
     .from(arrivalsTable)
-    .where(isNull(arrivalsTable.finishedAt));
+    .where(
+      and(
+        eq(arrivalsTable.companyId, req.companyId!),
+        isNull(arrivalsTable.finishedAt)
+      )
+    );
   let totalInYard = 0;
   let totalCalled = 0;
   let totalWaiting = 0;

@@ -5,14 +5,21 @@ import { eq } from "drizzle-orm";
 import { UpdateConfigBody } from "@workspace/api-zod";
 import { requireCompany, requireRole } from "../middlewares/auth";
 const router = Router();
-async function ensureConfig() {
-  const [existing] = await db.select().from(configTable).limit(1);
+async function ensureConfig(companyId: number) {
+  const [existing] = await db
+    .select()
+    .from(configTable)
+    .where(eq(configTable.companyId, companyId))
+    .limit(1);
   if (existing) return existing;
-  const [created] = await db.insert(configTable).values({}).returning();
+  const [created] = await db
+    .insert(configTable)
+    .values({ companyId })
+    .returning();
   return created!;
 }
-router.get("/config", requireCompany, async (_req, res) => {
-  const config = await ensureConfig();
+router.get("/config", requireCompany, async (req, res) => {
+  const config = await ensureConfig(req.companyId!);
   res.json({
     geofenceLat: config.geofenceLat,
     geofenceLng: config.geofenceLng,
@@ -30,7 +37,7 @@ router.patch(
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const config = await ensureConfig();
+  const config = await ensureConfig(req.companyId!);
   const [updated] = await db
     .update(configTable)
     .set({ ...parsed.data, updatedAt: new Date() })

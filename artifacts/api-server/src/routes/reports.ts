@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { arrivalsTable } from "@workspace/db";
-import { and, gte, lte, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
 import { GetReportsQueryParams } from "@workspace/api-zod";
 import { requireCompany, requireRole } from "../middlewares/auth";
 const router = Router();
@@ -21,7 +21,7 @@ router.get(
     return;
   }
   const { from, to, page = 1, limit = 50 } = parsed.data;
-  const conditions = [];
+  const conditions = [eq(arrivalsTable.companyId, req.companyId!)];
   if (from) {
     conditions.push(gte(arrivalsTable.createdAt, new Date(from)));
   }
@@ -30,7 +30,7 @@ router.get(
     toDate.setHours(23, 59, 59, 999);
     conditions.push(lte(arrivalsTable.createdAt, toDate));
   }
-  const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const whereClause = and(...conditions);
   const [countResult] = await db
     .select({ count: sql<number>`cast(count(*) as int)` })
     .from(arrivalsTable)
