@@ -73,9 +73,9 @@
   --popover-border: 213 20% 84%;
 
   /* Amber/Yellow - Core Accent */
-  --primary: 217 91% 54%;
+  --primary: 222 63% 50%;
   --primary-foreground: 0 0% 98%;
-  --primary-border: 217 91% 54%;
+  --primary-border: 222 63% 50%;
 
   --secondary: 213 18% 88%;
   --secondary-foreground: 222 40% 20%;
@@ -85,7 +85,7 @@
   --muted-foreground: 217 12% 48%;
   --muted-border: 213 15% 83%;
 
-  --accent: 217 91% 54%;
+  --accent: 222 63% 50%;
   --accent-foreground: 0 0% 98%;
   --accent-border: 38 92% 50%;
 
@@ -95,16 +95,16 @@
 
   --border: 213 20% 84%;
   --input: 213 20% 88%;
-  --ring: 217 91% 54%;
+  --ring: 222 63% 50%;
 
   --sidebar: 222 47% 15%;
   --sidebar-foreground: 213 20% 82%;
   --sidebar-border: 222 40% 20%;
-  --sidebar-primary: 217 91% 54%;
+  --sidebar-primary: 222 63% 50%;
   --sidebar-primary-foreground: 0 0% 98%;
   --sidebar-accent: 222 40% 22%;
   --sidebar-accent-foreground: 0 0% 90%;
-  --sidebar-ring: 217 91% 54%;
+  --sidebar-ring: 222 63% 50%;
 
   --app-font-sans: 'Outfit', sans-serif;
   --app-font-mono: 'Space Mono', monospace;

@@ -263,12 +263,12 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-5 pt-1">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-[#0051EC] shrink-0">
+          <div className="flex items-center justify-center h-9 w-9 rounded-lg bg-[#2F5FCE] shrink-0">
             <Truck size={18} className="text-white" />
           </div>
           <p className="font-bold text-lg tracking-tight leading-none notranslate" translate="no">
-            <span className="text-foreground">Yard</span>
-            <span className="text-[#5B9BFF]">Flow</span>
+            <span className="text-[#5B82D6]">Yard</span>
+            <span className="text-[#8FB0F5]">Flow</span>
           </p>
         </div>
         <button

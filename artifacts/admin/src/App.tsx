@@ -128,26 +128,26 @@ function SignInPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden p-6">
       {/* Ambient brand accents */}
-      <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#0051EC]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#2F5FCE]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#2F5FCE]/10 blur-3xl" />
 
       <div className="w-full max-w-sm relative">
         {/* Brand panel */}
-        <div className="w-full bg-[#0051EC] rounded-t-2xl px-6 pt-8 pb-7 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
+        <div className="w-full bg-[#0B1220] rounded-t-2xl px-6 pt-8 pb-7 shadow-xl flex flex-col items-center text-center relative overflow-hidden">
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top,white,transparent_65%)]" />
-          <div className="relative flex items-center justify-center h-14 w-14 rounded-2xl bg-white/15 border border-white/20 mb-3">
-            <Truck size={26} className="text-white" />
+          <div className="relative flex items-center justify-center h-14 w-14 rounded-2xl bg-[#2F5FCE]/25 border border-[#2F5FCE]/40 mb-3">
+            <Truck size={26} className="text-[#8FB0F5]" />
           </div>
-          <p className="relative notranslate font-bold text-2xl tracking-tight text-white" translate="no">
-            <span>Yard</span>
-            <span className="text-white/70">Flow</span>
+          <p className="relative notranslate font-bold text-2xl tracking-tight" translate="no">
+            <span className="text-[#5B82D6]">Yard</span>
+            <span className="text-[#8FB0F5]">Flow</span>
           </p>
-          <p className="relative text-white/50 text-[10px] uppercase tracking-widest mt-1">
+          <p className="relative text-white/40 text-[10px] uppercase tracking-widest mt-1">
             Yard Management
           </p>
-          <div className="relative w-10 h-px bg-white/25 my-4" />
+          <div className="relative w-10 h-px bg-white/15 my-4" />
           <h1 className="relative text-white font-semibold text-lg">Bem-vindo(a) de volta</h1>
-          <p className="relative text-white/70 text-sm mt-1">
+          <p className="relative text-white/60 text-sm mt-1">
             Entre com sua conta para acessar o painel.
           </p>
         </div>

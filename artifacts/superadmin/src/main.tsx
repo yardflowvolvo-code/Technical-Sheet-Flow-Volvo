@@ -15,7 +15,7 @@ createRoot(document.getElementById("root")!).render(
     afterSignOutUrl={import.meta.env.BASE_URL || "/superadmin/"}
     appearance={{
       variables: {
-        colorPrimary: "#0051EC",
+        colorPrimary: "#2F5FCE",
         colorPrimaryForeground: "#ffffff",
         colorBackground: "#ffffff",
         colorForeground: "#0f1b33",
@@ -24,7 +24,7 @@ createRoot(document.getElementById("root")!).render(
         colorInput: "#ffffff",
         colorInputForeground: "#0f1b33",
         colorBorder: "#e4e9f2",
-        colorRing: "#0051EC",
+        colorRing: "#2F5FCE",
         colorDanger: "#ef4444",
         borderRadius: "0.75rem",
         fontFamily: "Outfit, sans-serif",
@@ -34,8 +34,8 @@ createRoot(document.getElementById("root")!).render(
         headerTitle: "text-[#0f1b33]",
         headerSubtitle: "text-[#5b6b85]",
         formButtonPrimary:
-          "bg-[#0051EC] hover:bg-[#0043c4] text-white normal-case font-semibold",
-        footerActionLink: "text-[#0051EC] hover:text-[#0043c4]",
+          "bg-[#2F5FCE] hover:bg-[#24499E] text-white normal-case font-semibold",
+        footerActionLink: "text-[#2F5FCE] hover:text-[#24499E]",
         socialButtonsBlockButton: "border-[#e4e9f2]",
       },
     }}
