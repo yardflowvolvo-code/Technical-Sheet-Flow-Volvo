@@ -124,6 +124,7 @@ export default function Relatorios() {
                 <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="font-mono text-xs">PLACA</TableHead>
                   <TableHead>MOTORISTA</TableHead>
+                  <TableHead className="font-mono text-xs">NF</TableHead>
                   <TableHead>STATUS</TableHead>
                   <TableHead>CHEGADA</TableHead>
                   <TableHead>SAÍDA</TableHead>
@@ -133,13 +134,13 @@ export default function Relatorios() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-12">
+                    <TableCell colSpan={7} className="text-center py-12">
                       <span className="inline-block h-6 w-6 rounded-full border-2 border-primary border-r-transparent animate-spin" />
                     </TableCell>
                   </TableRow>
                 ) : !reportData?.data || reportData.data.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                       Nenhum registro encontrado no período.
                     </TableCell>
                   </TableRow>
@@ -149,7 +150,9 @@ export default function Relatorios() {
                       <TableCell className="font-mono font-medium">{row.plate}</TableCell>
                       <TableCell>
                         <div className="font-medium text-foreground">{row.driverName}</div>
-                        {row.invoiceNumber && <div className="text-xs text-muted-foreground">NF: {row.invoiceNumber}</div>}
+                      </TableCell>
+                      <TableCell className="font-mono text-sm text-muted-foreground">
+                        {row.invoiceNumber || "-"}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={
