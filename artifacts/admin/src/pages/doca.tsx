@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { format, formatDistanceToNowStrict } from "date-fns";
+import { format, formatDistanceToNowStrict, isToday, differenceInMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { 
   Truck, 
@@ -53,6 +53,15 @@ export default function Doca() {
     { active: true },
     { query: { refetchInterval: 10000, queryKey: getListArrivalsQueryKey({ active: true }) } }
   );
+
+  const { data: finishedArrivals = [], isLoading: loadingFinished } = useListArrivals(
+    { active: false },
+    { query: { refetchInterval: 30000, queryKey: getListArrivalsQueryKey({ active: false }) } }
+  );
+
+  const finishedToday = finishedArrivals
+    .filter((a) => a.finishedAt && isToday(new Date(a.finishedAt)))
+    .sort((a, b) => new Date(b.finishedAt!).getTime() - new Date(a.finishedAt!).getTime());
 
   const callDock = useCallDock();
   const checkoutArrival = useCheckoutArrival();
@@ -171,15 +180,16 @@ export default function Doca() {
         </div>
       </div>
 
-      {/* Active Arrivals List */}
-      <div className="flex-1 p-4 sm:p-6 overflow-hidden flex flex-col gap-4">
-        <h2 className="text-lg font-bold flex items-center gap-2 uppercase tracking-wide text-muted-foreground">
-          <Truck size={18} />
-          Veículos Ativos ({arrivals.length})
-        </h2>
+      {/* Active Arrivals List + Finished Today */}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        <ScrollArea className="flex-1">
+          <div className="p-4 sm:p-6 flex flex-col gap-4">
+            <h2 className="text-lg font-bold flex items-center gap-2 uppercase tracking-wide text-muted-foreground">
+              <Truck size={18} />
+              Veículos Ativos ({arrivals.length})
+            </h2>
 
-        <ScrollArea className="flex-1 -mx-4 px-4">
-          {loadingArrivals ? (
+            {loadingArrivals ? (
             <div className="flex justify-center py-12">
               <span className="h-8 w-8 rounded-full border-2 border-primary border-r-transparent animate-spin" />
             </div>
@@ -219,9 +229,13 @@ export default function Doca() {
                           {arrival.invoiceNumber && (
                             <p className="text-xs text-muted-foreground mt-0.5">NF: {arrival.invoiceNumber}</p>
                           )}
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Entrada: {format(new Date(arrival.createdAt), "HH:mm", { locale: ptBR })}
+                          </p>
                         </div>
 
                         <div className="text-right flex flex-col items-end">
+                          <p className="text-[10px] uppercase tracking-wide text-muted-foreground mb-0.5">Tempo de Espera</p>
                           <div className="flex items-center gap-1 text-sm font-mono bg-background border border-border px-2 py-1 rounded">
                             <Clock size={14} className={arrival.elapsedMinutes && arrival.elapsedMinutes > 120 ? 'text-destructive' : 'text-muted-foreground'} />
                             <span className={arrival.elapsedMinutes && arrival.elapsedMinutes > 120 ? 'text-destructive font-bold' : ''}>
@@ -309,7 +323,63 @@ export default function Doca() {
                 </Card>
               ))}
             </div>
-          )}
+            )}
+
+            {/* Finished Today */}
+            <h2 className="text-lg font-bold flex items-center gap-2 uppercase tracking-wide text-muted-foreground mt-4">
+              <CheckCircle2 size={18} />
+              Finalizados Hoje ({finishedToday.length})
+            </h2>
+
+            {loadingFinished ? (
+              <div className="flex justify-center py-8">
+                <span className="h-6 w-6 rounded-full border-2 border-primary border-r-transparent animate-spin" />
+              </div>
+            ) : finishedToday.length === 0 ? (
+              <div className="text-center py-8 text-sm text-muted-foreground border-2 border-dashed border-border rounded-lg">
+                Nenhum veículo finalizado hoje ainda.
+              </div>
+            ) : (
+              <Card className="border-border bg-card overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-secondary/50">
+                      <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
+                        <th className="px-4 py-2.5 font-semibold">Placa</th>
+                        <th className="px-4 py-2.5 font-semibold">Motorista</th>
+                        <th className="px-4 py-2.5 font-semibold">Entrada</th>
+                        <th className="px-4 py-2.5 font-semibold">Saída</th>
+                        <th className="px-4 py-2.5 font-semibold">Tempo no Pátio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {finishedToday.map((a) => {
+                        const durationMinutes =
+                          a.inYardAt && a.finishedAt
+                            ? differenceInMinutes(new Date(a.finishedAt), new Date(a.inYardAt))
+                            : null;
+                        return (
+                          <tr key={a.id} className="border-t border-border">
+                            <td className="px-4 py-2.5 font-mono font-bold">{a.plate}</td>
+                            <td className="px-4 py-2.5">{a.driverName}</td>
+                            <td className="px-4 py-2.5 font-mono">
+                              {format(new Date(a.createdAt), "HH:mm", { locale: ptBR })}
+                            </td>
+                            <td className="px-4 py-2.5 font-mono">
+                              {a.finishedAt ? format(new Date(a.finishedAt), "HH:mm", { locale: ptBR }) : "-"}
+                            </td>
+                            <td className="px-4 py-2.5 font-mono">
+                              {durationMinutes !== null ? `${durationMinutes} min` : "-"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            )}
+          </div>
         </ScrollArea>
       </div>
     </div>
