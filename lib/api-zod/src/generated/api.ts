@@ -40,6 +40,7 @@ export const ListArrivalsResponseItem = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -75,6 +76,7 @@ export const CreateArrivalResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -101,6 +103,7 @@ export const GetArrivalResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -134,6 +137,7 @@ export const UpdateArrivalResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -168,6 +172,7 @@ export const CallDockResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -195,6 +200,7 @@ export const ConfirmArrivalAtDockResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -222,6 +228,7 @@ export const CheckoutArrivalResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -249,17 +256,46 @@ export const ReportGeofenceExitResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
 
 
 /**
- * Driver PWA sends current coordinates periodically (every 20s)
- * @summary Update truck GPS location
+ * Used by the unauthenticated driver PWA to poll its own status, via the opaque token returned by /arrivals/link — not the numeric id, which is only used internally by authenticated staff.
+ * @summary Get arrival by public token (driver PWA, no auth)
+ */
+export const GetArrivalByTokenParams = zod.object({
+  "token": zod.coerce.string()
+})
+
+export const GetArrivalByTokenResponse = zod.object({
+  "id": zod.number(),
+  "plate": zod.string().describe('Truck license plate'),
+  "driverName": zod.string(),
+  "invoiceNumber": zod.string().nullish().describe('Nota fiscal or delivery schedule number'),
+  "status": zod.enum(['waiting', 'in_yard', 'called', 'possible_exit', 'finished']),
+  "dockNumber": zod.number().nullish().describe('Dock number when status is called'),
+  "lastLat": zod.number().nullish(),
+  "lastLng": zod.number().nullish(),
+  "lastLocationAt": zod.coerce.date().nullish(),
+  "inYardAt": zod.coerce.date().nullish(),
+  "calledAt": zod.coerce.date().nullish(),
+  "finishedAt": zod.coerce.date().nullish(),
+  "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
+  "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
+  "hasPushSubscription": zod.boolean().optional()
+})
+
+
+/**
+ * Driver PWA sends current coordinates periodically (every 20s), identified by its opaque public token rather than the numeric id.
+ * @summary Update truck GPS location (driver PWA, no auth)
  */
 export const UpdateLocationParams = zod.object({
-  "id": zod.coerce.number()
+  "token": zod.coerce.string()
 })
 
 export const UpdateLocationBody = zod.object({
@@ -297,6 +333,7 @@ export const LinkArrivalResponse = zod.object({
   "calledAt": zod.coerce.date().nullish(),
   "finishedAt": zod.coerce.date().nullish(),
   "createdAt": zod.coerce.date(),
+  "publicToken": zod.string().nullish().describe('Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable\/sequential.'),
   "elapsedMinutes": zod.number().nullish().describe('Minutes since truck entered the yard'),
   "hasPushSubscription": zod.boolean().optional()
 })
@@ -307,7 +344,7 @@ export const LinkArrivalResponse = zod.object({
  * @summary Subscribe to push notifications
  */
 export const SubscribePushParams = zod.object({
-  "id": zod.coerce.number()
+  "token": zod.coerce.string()
 })
 
 export const SubscribePushBody = zod.object({

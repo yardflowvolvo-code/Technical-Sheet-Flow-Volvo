@@ -231,18 +231,45 @@ paths:
               schema:
                 $ref: "#/components/schemas/Arrival"
 
-  /arrivals/{id}/location:
-    post:
-      operationId: updateLocation
-      tags: [location]
-      summary: Update truck GPS location
-      description: Driver PWA sends current coordinates periodically (every 20s)
+  /arrivals/by-token/{token}:
+    get:
+      operationId: getArrivalByToken
+      tags: [arrivals]
+      summary: Get arrival by public token (driver PWA, no auth)
+      description: >-
+        Used by the unauthenticated driver PWA to poll its own status,
+        via the opaque token returned by /arrivals/link — not the
+        numeric id, which is only used internally by authenticated staff.
       parameters:
-        - name: id
+        - name: token
           in: path
           required: true
           schema:
-            type: integer
+            type: string
+      responses:
+        "200":
+          description: Arrival details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Arrival"
+        "404":
+          description: Not found
+
+  /arrivals/by-token/{token}/location:
+    post:
+      operationId: updateLocation
+      tags: [location]
+      summary: Update truck GPS location (driver PWA, no auth)
+      description: >-
+        Driver PWA sends current coordinates periodically (every 20s),
+        identified by its opaque public token rather than the numeric id.
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -281,18 +308,18 @@ paths:
         "404":
           description: No matching active arrival found
 
-  /arrivals/{id}/push-subscribe:
+  /arrivals/by-token/{token}/push-subscribe:
     post:
       operationId: subscribePush
       tags: [push]
       summary: Subscribe to push notifications
       description: Register driver's device for Web Push notifications
       parameters:
-        - name: id
+        - name: token
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       requestBody:
         required: true
         content:
@@ -710,6 +737,11 @@ components:
         createdAt:
           type: string
           format: date-time
+        publicToken:
+          type: ["string", "null"]
+          description: >-
+            Opaque token used by the unauthenticated driver PWA instead of
+            the numeric id. Not guessable/sequential.
         elapsedMinutes:
           type: ["integer", "null"]
           description: Minutes since truck entered the yard

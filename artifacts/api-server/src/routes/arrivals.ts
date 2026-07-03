@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { randomUUID } from "node:crypto";
 import { db } from "@workspace/db";
 import { arrivalsTable, pushSubscriptionsTable } from "@workspace/db";
 import { eq, and, isNull, inArray, sql } from "drizzle-orm";
@@ -8,6 +9,7 @@ import {
   CallDockBody,
   LinkArrivalBody,
   GetArrivalParams,
+  GetArrivalByTokenParams,
   UpdateArrivalParams,
   CallDockParams,
   ConfirmArrivalAtDockParams,
@@ -27,6 +29,7 @@ function arrivalToResponse(a: typeof arrivalsTable.$inferSelect, hasPush: boolea
   }
   return {
     id: a.id,
+    publicToken: a.publicToken,
     plate: a.plate,
     driverName: a.driverName,
     invoiceNumber: a.invoiceNumber ?? null,
@@ -103,6 +106,7 @@ router.post(
       invoiceNumber,
       status: "waiting",
       companyId: req.companyId!,
+      publicToken: randomUUID(),
     })
     .returning();
   res.status(201).json(arrivalToResponse(arrival!, false));
@@ -139,11 +143,19 @@ router.post("/arrivals/link", async (req, res) => {
     return;
   }
 
+  // Backfill for any arrival created before public_token existed.
+  const ensuredToken = arrival.publicToken ?? randomUUID();
+
   // Mark as in_yard if still waiting
-  if (arrival.status === "waiting") {
+  if (arrival.status === "waiting" || !arrival.publicToken) {
     const [updated] = await db
       .update(arrivalsTable)
-      .set({ status: "in_yard", inYardAt: new Date() })
+      .set({
+        publicToken: ensuredToken,
+        ...(arrival.status === "waiting"
+          ? { status: "in_yard" as const, inYardAt: new Date() }
+          : {}),
+      })
       .where(eq(arrivalsTable.id, arrival.id))
       .returning();
     const result = await withPushFlag([updated!]);
@@ -155,7 +167,9 @@ router.post("/arrivals/link", async (req, res) => {
   res.json(result[0]);
 });
 
-router.get("/arrivals/:id", async (req, res) => {
+// Staff-only lookup by numeric id — the driver PWA uses the token-based
+// route below instead, which never exposes a guessable identifier.
+router.get("/arrivals/:id", requireCompany, async (req, res) => {
   const parsed = GetArrivalParams.safeParse({ id: Number(req.params.id) });
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid id" });
@@ -164,7 +178,32 @@ router.get("/arrivals/:id", async (req, res) => {
   const [arrival] = await db
     .select()
     .from(arrivalsTable)
-    .where(eq(arrivalsTable.id, parsed.data.id));
+    .where(
+      and(
+        eq(arrivalsTable.id, parsed.data.id),
+        eq(arrivalsTable.companyId, req.companyId!)
+      )
+    );
+  if (!arrival) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+  const result = await withPushFlag([arrival]);
+  res.json(result[0]);
+});
+
+// Public — used by the unauthenticated driver PWA to poll its own status
+// via the opaque token returned by /arrivals/link.
+router.get("/arrivals/by-token/:token", async (req, res) => {
+  const parsed = GetArrivalByTokenParams.safeParse({ token: req.params.token });
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid token" });
+    return;
+  }
+  const [arrival] = await db
+    .select()
+    .from(arrivalsTable)
+    .where(eq(arrivalsTable.publicToken, parsed.data.token));
   if (!arrival) {
     res.status(404).json({ error: "Not found" });
     return;

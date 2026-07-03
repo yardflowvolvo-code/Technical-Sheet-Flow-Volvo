@@ -8,19 +8,19 @@ const router = Router();
 router.get("/push/vapid-key", (_req, res) => {
   res.json({ publicKey: getVapidPublicKey() });
 });
-router.post("/arrivals/:id/push-subscribe", async (req, res) => {
-  const parsedParams = SubscribePushParams.safeParse({ id: Number(req.params.id) });
+router.post("/arrivals/by-token/:token/push-subscribe", async (req, res) => {
+  const parsedParams = SubscribePushParams.safeParse({ token: req.params.token });
   const parsedBody = SubscribePushBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
     res.status(400).json({ error: "Invalid input" });
     return;
   }
-  const { id } = parsedParams.data;
+  const { token } = parsedParams.data;
   const { endpoint, keys } = parsedBody.data;
   const [arrival] = await db
     .select()
     .from(arrivalsTable)
-    .where(eq(arrivalsTable.id, id));
+    .where(eq(arrivalsTable.publicToken, token));
   if (!arrival) {
     res.status(404).json({ error: "Arrival not found" });
     return;
@@ -30,7 +30,7 @@ router.post("/arrivals/:id/push-subscribe", async (req, res) => {
     .delete(pushSubscriptionsTable)
     .where(eq(pushSubscriptionsTable.endpoint, endpoint));
   await db.insert(pushSubscriptionsTable).values({
-    arrivalId: id,
+    arrivalId: arrival.id,
     endpoint,
     auth: keys.auth,
     p256dh: keys.p256dh,

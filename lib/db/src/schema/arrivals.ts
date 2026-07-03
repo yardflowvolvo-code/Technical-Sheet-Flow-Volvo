@@ -25,6 +25,10 @@ export const arrivalsTable = pgTable("arrivals", {
   companyId: integer("company_id").references(() => companiesTable.id, {
     onDelete: "cascade",
   }),
+  // Opaque, non-guessable identifier used by the unauthenticated driver PWA
+  // (status lookup, GPS reporting) instead of the sequential numeric id —
+  // the numeric id is only ever used internally by authenticated staff.
+  publicToken: text("public_token").unique(),
   plate: text("plate").notNull(),
   driverName: text("driver_name").notNull(),
   invoiceNumber: text("invoice_number"),

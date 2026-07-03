@@ -5,23 +5,24 @@ import { eq } from "drizzle-orm";
 import { UpdateLocationParams, UpdateLocationBody } from "@workspace/api-zod";
 import { haversineDistance } from "../lib/haversine";
 const router = Router();
-router.post("/arrivals/:id/location", async (req, res) => {
-  const parsedParams = UpdateLocationParams.safeParse({ id: Number(req.params.id) });
+router.post("/arrivals/by-token/:token/location", async (req, res) => {
+  const parsedParams = UpdateLocationParams.safeParse({ token: req.params.token });
   const parsedBody = UpdateLocationBody.safeParse(req.body);
   if (!parsedParams.success || !parsedBody.success) {
     res.status(400).json({ error: "Invalid input" });
     return;
   }
-  const { id } = parsedParams.data;
+  const { token } = parsedParams.data;
   const { lat, lng } = parsedBody.data;
   const [arrival] = await db
     .select()
     .from(arrivalsTable)
-    .where(eq(arrivalsTable.id, id));
+    .where(eq(arrivalsTable.publicToken, token));
   if (!arrival) {
     res.status(404).json({ error: "Not found" });
     return;
   }
+  const id = arrival.id;
   // Fetch geofence config for this arrival's own company
   const [config] = arrival.companyId
     ? await db

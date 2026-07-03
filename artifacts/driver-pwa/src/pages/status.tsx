@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import {
-  useGetArrival,
-  getGetArrivalQueryKey,
+  useGetArrivalByToken,
+  getGetArrivalByTokenQueryKey,
   useGetVapidKey,
   getGetVapidKeyQueryKey,
   useUpdateLocation,
@@ -27,7 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useI18n, type TranslationKey } from "@/lib/i18n";
 
 interface StatusPageProps {
-  arrivalId: number;
+  token: string;
   onUnlink: () => void;
 }
 
@@ -94,7 +94,7 @@ const STATUS_META = {
   },
 } as const;
 
-export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
+export default function StatusPage({ token, onUnlink }: StatusPageProps) {
   const { t } = useI18n();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -102,11 +102,11 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   const stopGeoRef = useRef<(() => void) | null>(null);
   const swRegRef = useRef<ServiceWorkerRegistration | null>(null);
 
-  const { data: arrival, isLoading } = useGetArrival(arrivalId, {
+  const { data: arrival, isLoading } = useGetArrivalByToken(token, {
     query: {
-      queryKey: getGetArrivalQueryKey(arrivalId),
+      queryKey: getGetArrivalByTokenQueryKey(token),
       refetchInterval: 8000,
-      enabled: !!arrivalId,
+      enabled: !!token,
     },
   });
 
@@ -159,14 +159,14 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   }, []);
 
   useEffect(() => {
-    if (!arrivalId) return;
+    if (!token) return;
 
     stopGeoRef.current = watchGeolocation((lat, lng) => {
       updateLocation.mutate(
-        { id: arrivalId, data: { lat, lng } },
+        { token, data: { lat, lng } },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: getGetArrivalQueryKey(arrivalId) });
+            queryClient.invalidateQueries({ queryKey: getGetArrivalByTokenQueryKey(token) });
           },
         }
       );
@@ -175,7 +175,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
     return () => {
       stopGeoRef.current?.();
     };
-  }, [arrivalId]);
+  }, [token]);
 
   async function handleEnablePush() {
     unlockAudio();
@@ -204,7 +204,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
 
       subscribePushMutation.mutate(
         {
-          id: arrivalId,
+          token,
           data: {
             endpoint: sub.endpoint,
             keys: {
@@ -216,7 +216,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
         {
           onSuccess: () => {
             toast({ title: t("notificationsEnabledTitle"), description: t("notificationsEnabledDesc") });
-            queryClient.invalidateQueries({ queryKey: getGetArrivalQueryKey(arrivalId) });
+            queryClient.invalidateQueries({ queryKey: getGetArrivalByTokenQueryKey(token) });
           },
           onError: () => {
             toast({ title: t("notificationsErrorTitle"), variant: "destructive" });
@@ -231,7 +231,7 @@ export default function StatusPage({ arrivalId, onUnlink }: StatusPageProps) {
   function handleUnlink() {
     stopAlarm();
     stopGeoRef.current?.();
-    localStorage.removeItem("yardflow_arrival_id");
+    localStorage.removeItem("yardflow_token");
     onUnlink();
     setLocation("/");
   }

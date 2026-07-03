@@ -37,6 +37,11 @@ export interface Arrival {
   finishedAt?: Date | null;
   createdAt: Date;
   /**
+     * Opaque token used by the unauthenticated driver PWA instead of the numeric id. Not guessable/sequential.
+     * @nullable
+     */
+  publicToken?: string | null;
+  /**
      * Minutes since truck entered the yard
      * @nullable
      */

@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n";
 import { unlockAudio } from "@/lib/alarm";
 
 interface LinkPageProps {
-  onLinked: (arrivalId: number) => void;
+  onLinked: (token: string) => void;
 }
 
 export default function LinkPage({ onLinked }: LinkPageProps) {
@@ -33,8 +33,12 @@ export default function LinkPage({ onLinked }: LinkPageProps) {
       { data: { plate: plate.toUpperCase(), invoiceNumber: invoice } },
       {
         onSuccess: (arrival) => {
-          localStorage.setItem("yardflow_arrival_id", String(arrival.id));
-          onLinked(arrival.id);
+          if (!arrival.publicToken) {
+            toast({ title: t("notFoundTitle"), variant: "destructive" });
+            return;
+          }
+          localStorage.setItem("yardflow_token", arrival.publicToken);
+          onLinked(arrival.publicToken);
           setLocation("/status");
         },
         onError: () => {

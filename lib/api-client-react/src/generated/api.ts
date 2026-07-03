@@ -744,22 +744,100 @@ export const useReportGeofenceExit = <TError = ErrorType<unknown>,
       return useMutation(getReportGeofenceExitMutationOptions(options));
     }
 
-export const getUpdateLocationUrl = (id: number,) => {
+export const getGetArrivalByTokenUrl = (token: string,) => {
 
 
 
 
-  return `/api/arrivals/${id}/location`
+  return `/api/arrivals/by-token/${token}`
 }
 
 /**
- * Driver PWA sends current coordinates periodically (every 20s)
- * @summary Update truck GPS location
+ * Used by the unauthenticated driver PWA to poll its own status, via the opaque token returned by /arrivals/link — not the numeric id, which is only used internally by authenticated staff.
+ * @summary Get arrival by public token (driver PWA, no auth)
  */
-export const updateLocation = async (id: number,
+export const getArrivalByToken = async (token: string, options?: RequestInit): Promise<Arrival> => {
+
+  return customFetch<Arrival>(getGetArrivalByTokenUrl(token),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetArrivalByTokenQueryKey = (token: string,) => {
+    return [
+    `/api/arrivals/by-token/${token}`
+    ] as const;
+    }
+
+
+export const getGetArrivalByTokenQueryOptions = <TData = Awaited<ReturnType<typeof getArrivalByToken>>, TError = ErrorType<void>>(token: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrivalByToken>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetArrivalByTokenQueryKey(token);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getArrivalByToken>>> = ({ signal }) => getArrivalByToken(token, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: token !== null && token !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getArrivalByToken>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetArrivalByTokenQueryResult = NonNullable<Awaited<ReturnType<typeof getArrivalByToken>>>
+export type GetArrivalByTokenQueryError = ErrorType<void>
+
+
+/**
+ * @summary Get arrival by public token (driver PWA, no auth)
+ */
+
+export function useGetArrivalByToken<TData = Awaited<ReturnType<typeof getArrivalByToken>>, TError = ErrorType<void>>(
+ token: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getArrivalByToken>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetArrivalByTokenQueryOptions(token,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getUpdateLocationUrl = (token: string,) => {
+
+
+
+
+  return `/api/arrivals/by-token/${token}/location`
+}
+
+/**
+ * Driver PWA sends current coordinates periodically (every 20s), identified by its opaque public token rather than the numeric id.
+ * @summary Update truck GPS location (driver PWA, no auth)
+ */
+export const updateLocation = async (token: string,
     locationInput: LocationInput, options?: RequestInit): Promise<LocationUpdate> => {
 
-  return customFetch<LocationUpdate>(getUpdateLocationUrl(id),
+  return customFetch<LocationUpdate>(getUpdateLocationUrl(token),
   {
     ...options,
     method: 'POST',
@@ -772,8 +850,8 @@ export const updateLocation = async (id: number,
 
 
 export const getUpdateLocationMutationOptions = <TError = ErrorType<void>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateLocation>>, TError,{id: number;data: BodyType<LocationInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateLocation>>, TError,{id: number;data: BodyType<LocationInput>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateLocation>>, TError,{token: string;data: BodyType<LocationInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateLocation>>, TError,{token: string;data: BodyType<LocationInput>}, TContext> => {
 
 const mutationKey = ['updateLocation'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -785,10 +863,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateLocation>>, {id: number;data: BodyType<LocationInput>}> = (props) => {
-          const {id,data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateLocation>>, {token: string;data: BodyType<LocationInput>}> = (props) => {
+          const {token,data} = props ?? {};
 
-          return  updateLocation(id,data,requestOptions)
+          return  updateLocation(token,data,requestOptions)
         }
 
 
@@ -803,14 +881,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type UpdateLocationMutationError = ErrorType<void>
 
     /**
- * @summary Update truck GPS location
+ * @summary Update truck GPS location (driver PWA, no auth)
  */
 export const useUpdateLocation = <TError = ErrorType<void>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateLocation>>, TError,{id: number;data: BodyType<LocationInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateLocation>>, TError,{token: string;data: BodyType<LocationInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof updateLocation>>,
         TError,
-        {id: number;data: BodyType<LocationInput>},
+        {token: string;data: BodyType<LocationInput>},
         TContext
       > => {
       return useMutation(getUpdateLocationMutationOptions(options));
@@ -887,22 +965,22 @@ export const useLinkArrival = <TError = ErrorType<void>,
       return useMutation(getLinkArrivalMutationOptions(options));
     }
 
-export const getSubscribePushUrl = (id: number,) => {
+export const getSubscribePushUrl = (token: string,) => {
 
 
 
 
-  return `/api/arrivals/${id}/push-subscribe`
+  return `/api/arrivals/by-token/${token}/push-subscribe`
 }
 
 /**
  * Register driver's device for Web Push notifications
  * @summary Subscribe to push notifications
  */
-export const subscribePush = async (id: number,
+export const subscribePush = async (token: string,
     pushSubscriptionInput: PushSubscriptionInput, options?: RequestInit): Promise<SuccessResponse> => {
 
-  return customFetch<SuccessResponse>(getSubscribePushUrl(id),
+  return customFetch<SuccessResponse>(getSubscribePushUrl(token),
   {
     ...options,
     method: 'POST',
@@ -915,8 +993,8 @@ export const subscribePush = async (id: number,
 
 
 export const getSubscribePushMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof subscribePush>>, TError,{id: number;data: BodyType<PushSubscriptionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof subscribePush>>, TError,{id: number;data: BodyType<PushSubscriptionInput>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof subscribePush>>, TError,{token: string;data: BodyType<PushSubscriptionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof subscribePush>>, TError,{token: string;data: BodyType<PushSubscriptionInput>}, TContext> => {
 
 const mutationKey = ['subscribePush'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -928,10 +1006,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof subscribePush>>, {id: number;data: BodyType<PushSubscriptionInput>}> = (props) => {
-          const {id,data} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof subscribePush>>, {token: string;data: BodyType<PushSubscriptionInput>}> = (props) => {
+          const {token,data} = props ?? {};
 
-          return  subscribePush(id,data,requestOptions)
+          return  subscribePush(token,data,requestOptions)
         }
 
 
@@ -949,11 +1027,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Subscribe to push notifications
  */
 export const useSubscribePush = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof subscribePush>>, TError,{id: number;data: BodyType<PushSubscriptionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof subscribePush>>, TError,{token: string;data: BodyType<PushSubscriptionInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof subscribePush>>,
         TError,
-        {id: number;data: BodyType<PushSubscriptionInput>},
+        {token: string;data: BodyType<PushSubscriptionInput>},
         TContext
       > => {
       return useMutation(getSubscribePushMutationOptions(options));

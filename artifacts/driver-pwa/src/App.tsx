@@ -19,10 +19,9 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
-  const [arrivalId, setArrivalId] = useState<number | null>(() => {
-    const stored = localStorage.getItem("yardflow_arrival_id");
-    return stored ? Number(stored) : null;
-  });
+  const [token, setToken] = useState<string | null>(() =>
+    localStorage.getItem("yardflow_token")
+  );
 
   useEffect(() => {
     registerServiceWorker();
@@ -41,26 +40,26 @@ function AppContent() {
     return () => window.removeEventListener("pointerdown", onFirstInteraction);
   }, []);
 
-  function handleLinked(id: number) {
-    setArrivalId(id);
+  function handleLinked(newToken: string) {
+    setToken(newToken);
   }
 
   function handleUnlink() {
-    setArrivalId(null);
+    setToken(null);
   }
 
   return (
     <Switch>
       <Route path="/">
-        {arrivalId ? (
-          <StatusPage arrivalId={arrivalId} onUnlink={handleUnlink} />
+        {token ? (
+          <StatusPage token={token} onUnlink={handleUnlink} />
         ) : (
           <LinkPage onLinked={handleLinked} />
         )}
       </Route>
       <Route path="/status">
-        {arrivalId ? (
-          <StatusPage arrivalId={arrivalId} onUnlink={handleUnlink} />
+        {token ? (
+          <StatusPage token={token} onUnlink={handleUnlink} />
         ) : (
           <LinkPage onLinked={handleLinked} />
         )}
