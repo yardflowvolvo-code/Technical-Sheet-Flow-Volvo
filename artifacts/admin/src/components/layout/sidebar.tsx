@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Truck,
   ClipboardList,
@@ -9,12 +9,12 @@ import {
   Map,
   UserCog,
   Menu,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser, useClerk } from "@clerk/react";
 import { useGetMe } from "@workspace/api-client-react";
 import { canAccess } from "@/lib/access";
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 
 const ALL_NAV_ITEMS = [
   { href: "/portaria", label: "Portaria", icon: ClipboardList },
@@ -134,6 +134,25 @@ export default function Sidebar() {
 
   const navItems = ALL_NAV_ITEMS.filter((item) => canAccess(role, item.href));
 
+  // Locks background scroll while the mobile drawer is open. Using a plain
+  // effect (rather than a Radix/third-party scroll-lock) guarantees the
+  // cleanup always runs — even if the drawer closes via navigation instead
+  // of its own close button — so the page can never get stuck unscrollable.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [mobileOpen]);
+
+  // Also close the drawer whenever the route changes (covers the case
+  // where a nav link is clicked without going through onNavigate).
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location]);
+
   return (
     <>
       {/* Desktop: permanent sidebar */}
@@ -164,15 +183,37 @@ export default function Sidebar() {
         <div className="w-9" aria-hidden />
       </div>
 
-      {/* Mobile: drawer with the same nav */}
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-72 p-0 bg-sidebar border-sidebar-border flex flex-col gap-0">
-          <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
-          <Brand />
-          <NavList navItems={navItems} location={location} onNavigate={() => setMobileOpen(false)} />
-          <Profile user={user} onSignOut={() => signOut()} />
-        </SheetContent>
-      </Sheet>
+      {/* Mobile: custom drawer (no third-party scroll-lock involved) */}
+      <div
+        className={cn(
+          "md:hidden fixed inset-0 z-50 bg-black/60 transition-opacity duration-200",
+          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden={!mobileOpen}
+      />
+      <div
+        className={cn(
+          "md:hidden fixed inset-y-0 left-0 z-50 w-72 bg-sidebar flex flex-col transition-transform duration-200 ease-out",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navegação"
+      >
+        <div className="flex justify-end p-2 shrink-0">
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-2 rounded-md text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+            aria-label="Fechar menu"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <Brand />
+        <NavList navItems={navItems} location={location} onNavigate={() => setMobileOpen(false)} />
+        <Profile user={user} onSignOut={() => signOut()} />
+      </div>
     </>
   );
 }
