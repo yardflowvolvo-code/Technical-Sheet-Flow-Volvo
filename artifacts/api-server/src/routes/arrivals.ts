@@ -58,6 +58,22 @@ async function withPushFlag(arrivals: (typeof arrivalsTable.$inferSelect)[]) {
   return arrivals.map((a) => arrivalToResponse(a, subSet.has(a.id)));
 }
 
+// Strips everything but letters/digits and uppercases, so "ABC-1234",
+// "abc 1234" and "ABC1234" are all treated as the same plate.
+function normalizePlate(value: string): string {
+  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+// Same idea for invoice numbers, plus stripping a leading "NF" — drivers
+// commonly type the on-screen example format ("NF-000123") literally,
+// even when the record was saved as just "000123".
+function normalizeInvoice(value: string): string {
+  return value
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .replace(/^NF/, "");
+}
+
 router.get("/arrivals", requireCompany, async (req, res) => {
   const { status, active } = req.query;
   const conditions = [eq(arrivalsTable.companyId, req.companyId!)];
@@ -124,8 +140,16 @@ router.post("/arrivals/link", async (req, res) => {
   }
   const { plate, invoiceNumber } = parsed.data;
   const conditions = [isNull(arrivalsTable.finishedAt)];
-  if (plate) conditions.push(eq(arrivalsTable.plate, plate.toUpperCase()));
-  if (invoiceNumber) conditions.push(eq(arrivalsTable.invoiceNumber, invoiceNumber));
+  if (plate) {
+    conditions.push(
+      sql`upper(regexp_replace(${arrivalsTable.plate}, '[^A-Za-z0-9]', '', 'g')) = ${normalizePlate(plate)}`
+    );
+  }
+  if (invoiceNumber) {
+    conditions.push(
+      sql`regexp_replace(upper(regexp_replace(${arrivalsTable.invoiceNumber}, '[^A-Za-z0-9]', '', 'g')), '^NF', '') = ${normalizeInvoice(invoiceNumber)}`
+    );
+  }
 
   if (!plate && !invoiceNumber) {
     res.status(400).json({ error: "plate or invoiceNumber required" });
